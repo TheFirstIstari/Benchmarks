@@ -81,13 +81,6 @@ fn extract_time_ms(line: &str) -> Option<f64> {
     None
 }
 
-fn get_unique_test_names(stats: &[BenchmarkStats]) -> Vec<String> {
-    let mut names: std::collections::HashSet<String> = stats.iter().map(|s| s.test_name.clone()).collect();
-    let mut names: Vec<String> = names.into_iter().collect();
-    names.sort();
-    names
-}
-
 fn get_flat_entries(stats: &[BenchmarkStats]) -> Vec<(String, String, f64, i32)> {
     let mut grouped: HashMap<String, Vec<&BenchmarkStats>> = HashMap::new();
     for stat in stats {
@@ -127,7 +120,6 @@ struct TestBatch {
 enum ViewMode {
     Graph,
     Table,
-    Detail,
     Stats,
 }
 
@@ -158,14 +150,47 @@ impl App {
         
         let batches = vec![
             TestBatch { name: "All".to_string(), just_tasks: vec!["all".to_string()], enabled: false },
-            TestBatch { name: "C (clang)".to_string(), just_tasks: vec!["c-matrix".to_string(), "c-sort".to_string(), "c-string".to_string(), "c-hash".to_string(), "c-regex".to_string()], enabled: true },
-            TestBatch { name: "C (gcc)".to_string(), just_tasks: vec!["gcc-matrix".to_string(), "gcc-sort".to_string(), "gcc-string".to_string(), "gcc-hash".to_string(), "gcc-regex".to_string()], enabled: true },
-            TestBatch { name: "C++ (clang)".to_string(), just_tasks: vec!["cpp-matrix".to_string(), "cpp-sort".to_string(), "cpp-string".to_string(), "cpp-hash".to_string(), "cpp-regex".to_string()], enabled: true },
-            TestBatch { name: "C++ (gcc)".to_string(), just_tasks: vec!["gxx-matrix".to_string(), "gxx-sort".to_string(), "gxx-string".to_string(), "gxx-hash".to_string(), "gxx-regex".to_string()], enabled: true },
-            TestBatch { name: "Rust".to_string(), just_tasks: vec!["rust-matrix".to_string(), "rust-sort".to_string(), "rust-string".to_string(), "rust-hash".to_string(), "rust-regex".to_string()], enabled: true },
-            TestBatch { name: "Python".to_string(), just_tasks: vec!["python-matrix".to_string(), "python-sort".to_string(), "python-string".to_string(), "python-hash".to_string(), "python-regex".to_string()], enabled: true },
-            TestBatch { name: "Java".to_string(), just_tasks: vec!["java-matrix".to_string(), "java-sort".to_string(), "java-string".to_string(), "java-hash".to_string(), "java-regex".to_string()], enabled: true },
-            TestBatch { name: "C#".to_string(), just_tasks: vec!["cs-matrix".to_string(), "cs-sort".to_string(), "cs-string".to_string()], enabled: false },
+            TestBatch { name: "C (clang)".to_string(), just_tasks: vec![
+                "c-matrix".to_string(), "c-sort".to_string(), "c-string".to_string(),
+                "c-hash".to_string(), "c-regex".to_string(), "c-json".to_string(),
+                "c-fileio".to_string(), "c-math".to_string(), "c-network".to_string(),
+                "c-crypto".to_string(), "c-ml".to_string(), "c-concurrency".to_string(),
+            ], enabled: true },
+            TestBatch { name: "C (gcc)".to_string(), just_tasks: vec![
+                "gcc-matrix".to_string(), "gcc-sort".to_string(), "gcc-string".to_string(),
+                "gcc-hash".to_string(), "gcc-regex".to_string(),
+            ], enabled: true },
+            TestBatch { name: "C++ (clang)".to_string(), just_tasks: vec![
+                "cpp-matrix".to_string(), "cpp-sort".to_string(), "cpp-string".to_string(),
+                "cpp-hash".to_string(), "cpp-regex".to_string(), "cpp-json".to_string(),
+                "cpp-fileio".to_string(), "cpp-math".to_string(), "cpp-network".to_string(),
+                "cpp-crypto".to_string(), "cpp-concurrency".to_string(),
+            ], enabled: true },
+            TestBatch { name: "C++ (gcc)".to_string(), just_tasks: vec![
+                "gxx-matrix".to_string(), "gxx-sort".to_string(), "gxx-string".to_string(),
+                "gxx-hash".to_string(), "gxx-regex".to_string(),
+            ], enabled: true },
+            TestBatch { name: "Rust".to_string(), just_tasks: vec![
+                "rust-matrix".to_string(), "rust-sort".to_string(), "rust-string".to_string(),
+                "rust-hash".to_string(), "rust-regex".to_string(), "rust-json".to_string(),
+                "rust-fileio".to_string(), "rust-math".to_string(), "rust-network".to_string(),
+                "rust-crypto".to_string(), "rust-ml".to_string(), "rust-concurrency".to_string(),
+            ], enabled: true },
+            TestBatch { name: "Python".to_string(), just_tasks: vec![
+                "python-matrix".to_string(), "python-sort".to_string(), "python-string".to_string(),
+                "python-hash".to_string(), "python-regex".to_string(), "python-json".to_string(),
+                "python-fileio".to_string(), "python-math".to_string(), "python-network".to_string(),
+                "python-crypto".to_string(), "python-ml".to_string(), "python-async".to_string(),
+            ], enabled: true },
+            TestBatch { name: "Java".to_string(), just_tasks: vec![
+                "java-matrix".to_string(), "java-sort".to_string(), "java-string".to_string(),
+                "java-hash".to_string(), "java-regex".to_string(), "java-json".to_string(),
+                "java-fileio".to_string(), "java-math".to_string(), "java-crypto".to_string(),
+                "java-concurrency".to_string(),
+            ], enabled: true },
+            TestBatch { name: "C#".to_string(), just_tasks: vec![
+                "cs-matrix".to_string(), "cs-sort".to_string(), "cs-string".to_string(),
+            ], enabled: false },
         ];
         
         Self {
@@ -213,6 +238,20 @@ impl App {
                     "hash"
                 } else if task.contains("regex") {
                     "regex"
+                } else if task.contains("json") {
+                    "json"
+                } else if task.contains("fileio") {
+                    "fileio"
+                } else if task.contains("math") {
+                    "math"
+                } else if task.contains("network") {
+                    "network"
+                } else if task.contains("crypto") {
+                    "crypto"
+                } else if task.contains("ml") {
+                    "ml"
+                } else if task.contains("concurrency") || task.contains("async") {
+                    "concurrency"
                 } else {
                     "other"
                 };
@@ -625,7 +664,7 @@ fn render_table_view(frame: &mut ratatui::Frame, area: Rect, stats: &[BenchmarkS
         .highlight_style(Style::new().bg(Color::Blue).fg(Color::White))
         .highlight_symbol("► ");
     
-    frame.render_widget(table, area);
+    frame.render_stateful_widget(table, area, &mut table_state);
 }
 
 fn render_header(frame: &mut ratatui::Frame, area: Rect, runs: &[BenchmarkRun]) {
@@ -659,7 +698,6 @@ fn render_results(frame: &mut ratatui::Frame, area: Rect, app: &App) {
     match app.view_mode {
         ViewMode::Graph => render_line_graph(frame, main_area, &app.stats),
         ViewMode::Table => render_table_view(frame, main_area, &app.stats, app.selected_row),
-        ViewMode::Detail => {}
         ViewMode::Stats => {}
     }
     
@@ -695,14 +733,12 @@ fn render_tabs(frame: &mut ratatui::Frame, area: Rect, current: &ViewMode) {
         match current {
             ViewMode::Graph => Span::styled(" [1] GRAPH ", Style::new().bg(Color::Cyan).fg(Color::Black)),
             ViewMode::Table => Span::styled(" [1] GRAPH ", Style::new().fg(Color::DarkGray)),
-            ViewMode::Detail => Span::styled(" [1] GRAPH ", Style::new().fg(Color::DarkGray)),
             ViewMode::Stats => Span::styled(" [1] GRAPH ", Style::new().fg(Color::DarkGray)),
         },
         Span::raw(" │ "),
         match current {
             ViewMode::Table => Span::styled(" [2] TABLE ", Style::new().bg(Color::Cyan).fg(Color::Black)),
             ViewMode::Graph => Span::styled(" [2] TABLE ", Style::new().fg(Color::DarkGray)),
-            ViewMode::Detail => Span::styled(" [2] TABLE ", Style::new().fg(Color::DarkGray)),
             ViewMode::Stats => Span::styled(" [2] TABLE ", Style::new().fg(Color::DarkGray)),
         },
         Span::raw(" │ "),
@@ -844,7 +880,16 @@ fn main() {
     execute!(io::stdout(), EnterAlternateScreen).ok();
     
     let backend = CrosstermBackend::new(io::stdout());
-    let mut terminal = Terminal::new(backend).unwrap();
+    let mut terminal = match Terminal::new(backend) {
+        Ok(t) => t,
+        Err(e) => {
+            execute!(io::stdout(), LeaveAlternateScreen).ok();
+            terminal::disable_raw_mode().ok();
+            eprintln!("Failed to initialize terminal: {}", e);
+            eprintln!("The monitor requires an interactive terminal. Try running: just monitor");
+            std::process::exit(1);
+        }
+    };
     let mut app = App::new();
     
     loop {
@@ -887,7 +932,6 @@ fn main() {
                                 ViewMode::Graph => ViewMode::Table,
                                 ViewMode::Table => ViewMode::Stats,
                                 ViewMode::Stats => ViewMode::Graph,
-                                ViewMode::Detail => ViewMode::Graph,
                             };
                         }
                         KeyCode::Down | KeyCode::Char('j') => {
@@ -924,7 +968,7 @@ fn main() {
                         _ => {}
                     }
                 }
-                View::Stats { test_name } => {
+                View::Stats { test_name: _ } => {
                     match key.code {
                         KeyCode::Char('q') | KeyCode::Esc => app.view = View::Main,
                         _ => {}
