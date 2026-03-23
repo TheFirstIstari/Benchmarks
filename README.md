@@ -4,7 +4,7 @@ A comprehensive benchmark suite comparing performance across multiple programmin
 
 ## Features
 
-- **Multi-language support**: C, C++, Rust, Python, Java
+- **Multi-language support**: C (clang/gcc), C++ (clang/g++), Rust, Python, Java
 - **9 benchmark categories**: Matrix, Sort, Hash, Regex, JSON, File I/O, Math, Network, ML
 - **Interactive TUI**: Graph and table views with statistical analysis
 - **SQLite storage**: Persistent benchmark result history
@@ -36,23 +36,30 @@ just monitor
 ## Benchmark Commands
 
 ```bash
-# All languages
+# All benchmarks
 just all
 
-# By category
+# All languages for a category
 just matrix-all
 just sort-all
 just hash-all
 just json-all
+just network-all
+
+# By language (clang)
+just c-matrix
+just c-sort
+just c-hash
+just cpp-matrix
+
+# By language (gcc)
+just gcc-matrix
+just gxx-matrix
 
 # By language
-just c-matrix     # C (clang)
-just gcc-matrix  # C (gcc)
-just cpp-matrix  # C++ (clang)
-just gxx-matrix  # C++ (g++)
 just rust-matrix
 just python-matrix
-just python-json-multi  # Compare JSON libraries
+just python-json-multi  # Compare stdlib json vs ujson vs orjson
 just java-matrix
 ```
 
@@ -65,17 +72,17 @@ Run `just monitor` to launch the interactive TUI:
 | `[1]` | Graph view (line chart) |
 | `[2]` | Table view (list) |
 | `[3]` | Statistics view |
-| `[j/k]` or arrows | Navigate rows |
-| `[Enter]` | Detail view |
+| `[j/k]` or arrows | Navigate rows in table |
+| `[Enter]` | Detail view for selected benchmark |
 | `[s]` | Select benchmarks to run |
-| `[r]` | Run benchmarks |
-| `[R]` | Refresh data |
+| `[r]` | Run selected benchmarks |
+| `[R]` | Refresh data from database |
 | `[q]` | Quit |
 
 ### Detail & Stats Views
 
-- **Detail View**: Shows all languages compared for a specific benchmark
-- **Statistics View**: Shows avg, min, max, std_dev, Q1, Q3, runs
+- **Detail View**: Shows all languages compared for a specific benchmark with min/max
+- **Statistics View**: Shows avg, min, max, std_dev (standard deviation), Q1 (25th percentile), Q3 (75th percentile), runs
 
 ## Project Structure
 
@@ -98,9 +105,23 @@ Benchmarks/
 
 ## Optimization Flags
 
-- **C/C++**: `-Ofast -march=native` (maximum compiler optimizations)
+- **C/C++**: `-Ofast -march=native` (maximum compiler optimizations including `-ffast-math`)
 - **Rust**: `opt-level = 3, lto = "fat", codegen-units = 1`
 - **Java**: JIT warmup enabled before timing
+
+## Benchmark Categories
+
+| Category | Tests |
+|----------|-------|
+| **Matrix** | Multiply, Transpose, Add (2000x2000 float matrices) |
+| **Sort** | Qsort, Quicksort, Heapsort, Mergesort (1M integers) |
+| **Hash** | SDBM, DJB2, FNV (1M iterations) |
+| **Regex** | Find, Count, Email pattern match |
+| **JSON** | Parse, Serialize, Count fields (1MB payload) |
+| **File I/O** | Write, Read, Read lines, Random access (5MB files) |
+| **Math** | Trig (sin/cos), Exp/Log, Arithmetic (x*x, x*x*x) |
+| **Network** | Pipe throughput, Memcpy 8K |
+| **ML** | Element-wise mul, Dot product, Lerp, Sigmoid |
 
 ## Adding New Benchmarks
 
@@ -108,19 +129,22 @@ Benchmarks/
 2. Add just recipe to `justfile`
 3. Rebuild tools if needed: `just tools-build`
 
-## Benchmark Categories
+## Sharing Results
 
-| Category | Tests |
-|----------|-------|
-| **Matrix** | Multiply, Transpose, Add (2000x2000) |
-| **Sort** | Qsort, Quicksort, Heapsort, Mergesort |
-| **Hash** | SDBM, DJB2, FNV (1M iterations) |
-| **Regex** | Find, Count, Email match |
-| **JSON** | Parse, Serialize, Count fields |
-| **File I/O** | Write, Read, Read lines, Random access (5MB) |
-| **Math** | Trig, Exp/Log, Arithmetic |
-| **Network** | Pipe throughput, Memcpy |
-| **ML** | Element-wise mul, Dot product, Lerp, Sigmoid |
+Results are stored in SQLite. To share results between machines:
+
+```bash
+# Export results
+sqlite3 ~/.local/share/benchmarks/benchmarks.db .dump > results.sql
+
+# Import on another machine
+sqlite3 ~/.local/share/benchmarks/benchmarks.db < results.sql
+```
+
+Or copy the database file:
+```
+~/.local/share/benchmarks/benchmarks.db
+```
 
 ## License
 
