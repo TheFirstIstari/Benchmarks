@@ -1,0 +1,24 @@
+# Build artifacts
+benchmarks/
+target/
+*.o
+*.a
+*.so
+*.dylib
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.db
+
+# Misc
+*.log
+.env

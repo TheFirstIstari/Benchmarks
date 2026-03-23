@@ -1,0 +1,7 @@
+[tools]
+python = "3.13.2"
+rust = "stable"
+dotnet = "9.0.203"
+
+[settings]
+python.uv_venv_auto = true

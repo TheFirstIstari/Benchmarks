@@ -1,0 +1,65 @@
+[package]
+name = "benchmarks"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8"
+regex = "1"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+
+[[bin]]
+name = "matrix"
+path = "matrix.rs"
+
+[[bin]]
+name = "allocator"
+path = "allocator.rs"
+
+[[bin]]
+name = "string"
+path = "string.rs"
+
+[[bin]]
+name = "sort"
+path = "sort.rs"
+
+[[bin]]
+name = "concurrency"
+path = "concurrency.rs"
+
+[[bin]]
+name = "hash"
+path = "hash.rs"
+
+[[bin]]
+name = "regex"
+path = "regex.rs"
+
+[[bin]]
+name = "json"
+path = "json.rs"
+
+[[bin]]
+name = "fileio"
+path = "fileio.rs"
+
+[[bin]]
+name = "math"
+path = "math.rs"
+
+[[bin]]
+name = "network"
+path = "network.rs"
+
+[[bin]]
+name = "crypto"
+path = "crypto.rs"
+
+[[bin]]
+name = "ml"
+path = "ml.rs"
