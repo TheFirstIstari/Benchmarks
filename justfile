@@ -29,55 +29,55 @@ ml-all: c-ml python-ml rust-ml
 c-all: c-matrix c-allocator c-string c-sort c-concurrency c-hash c-regex c-network c-crypto c-ml
 
 c-matrix:
-    cc "{{ROOT}}/C/matrix.c" -Ofast -march=native -o benchmarks/c_matrix -lm
+    cc "{{ROOT}}/C/matrix.c" -O3 -ffast-math -march=native -o benchmarks/c_matrix -lm
     ./benchmarks/c_matrix
 
 c-allocator:
-    cc "{{ROOT}}/C/allocator.c" -Ofast -march=native -o benchmarks/c_allocator -lm
+    cc "{{ROOT}}/C/allocator.c" -O3 -ffast-math -march=native -o benchmarks/c_allocator -lm
     ./benchmarks/c_allocator
 
 c-string:
-    cc "{{ROOT}}/C/string.c" -Ofast -march=native -o benchmarks/c_string
+    cc "{{ROOT}}/C/string.c" -O3 -ffast-math -march=native -o benchmarks/c_string
     ./benchmarks/c_string
 
 c-sort:
-    cc "{{ROOT}}/C/sort.c" -Ofast -march=native -o benchmarks/c_sort -lm
+    cc "{{ROOT}}/C/sort.c" -O3 -ffast-math -march=native -o benchmarks/c_sort -lm
     ./benchmarks/c_sort
 
 c-concurrency:
-    cc "{{ROOT}}/C/concurrency.c" -Ofast -march=native -o benchmarks/c_concurrency -lpthread
+    cc "{{ROOT}}/C/concurrency.c" -O3 -ffast-math -march=native -o benchmarks/c_concurrency -lpthread
     ./benchmarks/c_concurrency
 
 c-hash:
-    cc "{{ROOT}}/C/hash.c" -Ofast -march=native -o benchmarks/c_hash
+    cc "{{ROOT}}/C/hash.c" -O3 -march=native -ffast-math -o benchmarks/c_hash
     ./benchmarks/c_hash
 
 c-regex:
-    cc "{{ROOT}}/C/regex.c" -Ofast -march=native -o benchmarks/c_regex
+    cc "{{ROOT}}/C/regex.c" -O3 -ffast-math -march=native -o benchmarks/c_regex
     ./benchmarks/c_regex
 
 c-json:
-    cc "{{ROOT}}/C/json.c" -Ofast -march=native -o benchmarks/c_json
+    cc "{{ROOT}}/C/json.c" -O3 -ffast-math -march=native -o benchmarks/c_json
     ./benchmarks/c_json
 
 c-fileio:
-    cc "{{ROOT}}/C/fileio.c" -Ofast -march=native -o benchmarks/c_fileio
+    cc "{{ROOT}}/C/fileio.c" -O3 -ffast-math -march=native -o benchmarks/c_fileio
     ./benchmarks/c_fileio
 
 c-math:
-    cc "{{ROOT}}/C/math.c" -Ofast -march=native -o benchmarks/c_math -lm
+    cc "{{ROOT}}/C/math.c" -O3 -ffast-math -march=native -o benchmarks/c_math -lm
     ./benchmarks/c_math
 
 c-network:
-    cc "{{ROOT}}/C/network.c" -Ofast -march=native -o benchmarks/c_network
+    cc "{{ROOT}}/C/network.c" -O3 -ffast-math -march=native -o benchmarks/c_network
     ./benchmarks/c_network
 
 c-crypto:
-    cc "{{ROOT}}/C/crypto.c" -Ofast -march=native -o benchmarks/c_crypto
+    cc "{{ROOT}}/C/crypto.c" -O3 -ffast-math -march=native -o benchmarks/c_crypto
     ./benchmarks/c_crypto
 
 c-ml:
-    cc "{{ROOT}}/C/ml.c" -Ofast -march=native -o benchmarks/c_ml -lm
+    cc "{{ROOT}}/C/ml.c" -O3 -ffast-math -march=native -o benchmarks/c_ml -lm
     ./benchmarks/c_ml
 
 # ============================================================================
@@ -86,31 +86,31 @@ c-ml:
 gcc-all: gcc-matrix gcc-allocator gcc-string gcc-sort gcc-concurrency gcc-hash gcc-regex
 
 gcc-matrix:
-    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/matrix.c" -Ofast -march=native -o benchmarks/gcc_matrix -lm
+    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/matrix.c" -O3 -ffast-math -march=native -o benchmarks/gcc_matrix -lm
     ./benchmarks/gcc_matrix
 
 gcc-allocator:
-    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/allocator.c" -Ofast -march=native -o benchmarks/gcc_allocator -lm
+    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/allocator.c" -O3 -ffast-math -march=native -o benchmarks/gcc_allocator -lm
     ./benchmarks/gcc_allocator
 
 gcc-string:
-    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/string.c" -Ofast -march=native -o benchmarks/gcc_string
+    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/string.c" -O3 -ffast-math -march=native -o benchmarks/gcc_string
     ./benchmarks/gcc_string
 
 gcc-sort:
-    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/sort.c" -Ofast -march=native -o benchmarks/gcc_sort -lm
+    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/sort.c" -O3 -ffast-math -march=native -o benchmarks/gcc_sort -lm
     ./benchmarks/gcc_sort
 
 gcc-concurrency:
-    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/concurrency.c" -Ofast -march=native -o benchmarks/gcc_concurrency -lpthread
+    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/concurrency.c" -O3 -ffast-math -march=native -o benchmarks/gcc_concurrency -lpthread
     ./benchmarks/gcc_concurrency
 
 gcc-hash:
-    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/hash.c" -Ofast -march=native -o benchmarks/gcc_hash
+    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/hash.c" -O3 -ffast-math -march=native -o benchmarks/gcc_hash
     ./benchmarks/gcc_hash
 
 gcc-regex:
-    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/regex.c" -Ofast -march=native -o benchmarks/gcc_regex
+    /opt/homebrew/bin/gcc-15 "{{ROOT}}/C/regex.c" -O3 -ffast-math -march=native -o benchmarks/gcc_regex
     ./benchmarks/gcc_regex
 
 # ============================================================================
@@ -119,51 +119,51 @@ gcc-regex:
 cpp-all: cpp-matrix cpp-allocator cpp-string cpp-sort cpp-concurrency cpp-hash cpp-regex cpp-network cpp-crypto
 
 cpp-matrix:
-    clang++ "{{ROOT}}/C++/matrix.cpp" -Ofast -march=native -o benchmarks/cpp_matrix -lm
+    clang++ "{{ROOT}}/C++/matrix.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_matrix -lm
     ./benchmarks/cpp_matrix
 
 cpp-allocator:
-    clang++ "{{ROOT}}/C++/allocator.cpp" -Ofast -march=native -o benchmarks/cpp_allocator -lm
+    clang++ "{{ROOT}}/C++/allocator.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_allocator -lm
     ./benchmarks/cpp_allocator
 
 cpp-string:
-    clang++ "{{ROOT}}/C++/string.cpp" -Ofast -march=native -o benchmarks/cpp_string
+    clang++ "{{ROOT}}/C++/string.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_string
     ./benchmarks/cpp_string
 
 cpp-sort:
-    clang++ "{{ROOT}}/C++/sort.cpp" -Ofast -march=native -o benchmarks/cpp_sort -lm
+    clang++ "{{ROOT}}/C++/sort.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_sort -lm
     ./benchmarks/cpp_sort
 
 cpp-concurrency:
-    clang++ "{{ROOT}}/C++/concurrency.cpp" -Ofast -march=native -o benchmarks/cpp_concurrency -lpthread
+    clang++ "{{ROOT}}/C++/concurrency.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_concurrency -lpthread
     ./benchmarks/cpp_concurrency
 
 cpp-hash:
-    clang++ "{{ROOT}}/C++/hash.cpp" -Ofast -march=native -o benchmarks/cpp_hash
+    clang++ "{{ROOT}}/C++/hash.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_hash
     ./benchmarks/cpp_hash
 
 cpp-regex:
-    clang++ "{{ROOT}}/C++/regex.cpp" -Ofast -march=native -o benchmarks/cpp_regex
+    clang++ "{{ROOT}}/C++/regex.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_regex
     ./benchmarks/cpp_regex
 
 cpp-json:
-    clang++ "{{ROOT}}/C++/json.cpp" -Ofast -march=native -o benchmarks/cpp_json
+    clang++ "{{ROOT}}/C++/json.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_json
     ./benchmarks/cpp_json
 
 cpp-fileio:
-    clang++ "{{ROOT}}/C++/fileio.cpp" -Ofast -march=native -o benchmarks/cpp_fileio
+    clang++ "{{ROOT}}/C++/fileio.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_fileio
     ./benchmarks/cpp_fileio
 
 cpp-math:
-    clang++ "{{ROOT}}/C++/math.cpp" -Ofast -march=native -o benchmarks/cpp_math -lm
+    clang++ "{{ROOT}}/C++/math.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_math -lm
     ./benchmarks/cpp_math
 
 cpp-network:
-    clang++ "{{ROOT}}/C++/network.cpp" -Ofast -march=native -o benchmarks/cpp_network
+    clang++ "{{ROOT}}/C++/network.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_network
     ./benchmarks/cpp_network
 
 cpp-crypto:
-    clang++ "{{ROOT}}/C++/crypto.cpp" -Ofast -march=native -o benchmarks/cpp_crypto
+    clang++ "{{ROOT}}/C++/crypto.cpp" -O3 -ffast-math -march=native -o benchmarks/cpp_crypto
     ./benchmarks/cpp_crypto
 
 # ============================================================================
@@ -318,31 +318,31 @@ rust-ml: rust-build
 gxx-all: gxx-matrix gxx-allocator gxx-string gxx-sort gxx-concurrency gxx-hash gxx-regex
 
 gxx-matrix:
-    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/matrix.cpp" -Ofast -march=native -o benchmarks/gxx_matrix -lm
+    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/matrix.cpp" -O3 -ffast-math -march=native -o benchmarks/gxx_matrix -lm
     ./benchmarks/gxx_matrix
 
 gxx-allocator:
-    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/allocator.cpp" -Ofast -march=native -o benchmarks/gxx_allocator -lm
+    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/allocator.cpp" -O3 -ffast-math -march=native -o benchmarks/gxx_allocator -lm
     ./benchmarks/gxx_allocator
 
 gxx-string:
-    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/string.cpp" -Ofast -march=native -o benchmarks/gxx_string
+    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/string.cpp" -O3 -ffast-math -march=native -o benchmarks/gxx_string
     ./benchmarks/gxx_string
 
 gxx-sort:
-    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/sort.cpp" -Ofast -march=native -o benchmarks/gxx_sort -lm
+    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/sort.cpp" -O3 -ffast-math -march=native -o benchmarks/gxx_sort -lm
     ./benchmarks/gxx_sort
 
 gxx-concurrency:
-    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/concurrency.cpp" -Ofast -march=native -o benchmarks/gxx_concurrency -lpthread
+    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/concurrency.cpp" -O3 -ffast-math -march=native -o benchmarks/gxx_concurrency -lpthread
     ./benchmarks/gxx_concurrency
 
 gxx-hash:
-    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/hash.cpp" -Ofast -march=native -o benchmarks/gxx_hash
+    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/hash.cpp" -O3 -ffast-math -march=native -o benchmarks/gxx_hash
     ./benchmarks/gxx_hash
 
 gxx-regex:
-    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/regex.cpp" -Ofast -march=native -o benchmarks/gxx_regex
+    /opt/homebrew/bin/g++-15 "{{ROOT}}/C++/regex.cpp" -O3 -ffast-math -march=native -o benchmarks/gxx_regex
     ./benchmarks/gxx_regex
 
 # ============================================================================
