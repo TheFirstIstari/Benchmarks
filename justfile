@@ -9,21 +9,24 @@ export ROOT := `pwd`
 install:
     mise install
 
-all: c-all cpp-all python-all java-all rust-all cs-all carbon-all
+all: c-all cpp-all python-all java-all rust-all gcc-all gxx-all
 
-matrix-all: c-matrix cpp-matrix python-matrix java-matrix rust-matrix cs-matrix
-sort-all: c-sort cpp-sort python-sort java-sort rust-sort cs-sort
-string-all: c-string cpp-string python-string java-string rust-string cs-string
+matrix-all: c-matrix gcc-matrix cpp-matrix gxx-matrix python-matrix java-matrix rust-matrix
+sort-all: c-sort gcc-sort cpp-sort gxx-sort python-sort java-sort rust-sort
+string-all: c-string gcc-string cpp-string gxx-string python-string java-string rust-string
 hash-all: c-hash cpp-hash python-hash java-hash rust-hash
 regex-all: c-regex cpp-regex python-regex java-regex rust-regex
 json-all: c-json cpp-json python-json java-json rust-json
 fileio-all: c-fileio cpp-fileio python-fileio java-fileio rust-fileio
 math-all: c-math cpp-math python-math java-math rust-math
+network-all: c-network cpp-network python-network
+crypto-all: c-crypto cpp-crypto python-crypto java-crypto rust-crypto
+ml-all: c-ml python-ml rust-ml
 
 # ============================================================================
 # C Benchmarks
 # ============================================================================
-c-all: c-matrix c-allocator c-string c-sort c-concurrency c-hash c-regex
+c-all: c-matrix c-allocator c-string c-sort c-concurrency c-hash c-regex c-network c-crypto c-ml
 
 c-matrix:
     cc "{{ROOT}}/C/matrix.c" -Ofast -march=native -o benchmarks/c_matrix -lm
@@ -113,7 +116,7 @@ gcc-regex:
 # ============================================================================
 # C++ Benchmarks (Clang)
 # ============================================================================
-cpp-all: cpp-matrix cpp-allocator cpp-string cpp-sort cpp-concurrency cpp-hash cpp-regex
+cpp-all: cpp-matrix cpp-allocator cpp-string cpp-sort cpp-concurrency cpp-hash cpp-regex cpp-network cpp-crypto
 
 cpp-matrix:
     clang++ "{{ROOT}}/C++/matrix.cpp" -Ofast -march=native -o benchmarks/cpp_matrix -lm
@@ -166,7 +169,7 @@ cpp-crypto:
 # ============================================================================
 # Python Benchmarks
 # ============================================================================
-python-all: python-matrix python-string python-sort python-async python-hash python-regex python-json python-fileio python-math
+python-all: python-matrix python-string python-sort python-async python-hash python-regex python-json python-json-multi python-fileio python-math python-network python-crypto python-ml
 
 python-matrix:
     python "{{ROOT}}/Python/matrix.py"
@@ -214,7 +217,7 @@ JAVA_HOME := "/opt/homebrew/opt/openjdk"
 JAVA := JAVA_HOME + "/bin/java"
 JAVAC := JAVA_HOME + "/bin/javac"
 
-java-all: java-matrix java-string java-sort java-concurrency java-hash java-regex java-json java-fileio java-math
+java-all: java-matrix java-string java-sort java-concurrency java-hash java-regex java-json java-fileio java-math java-crypto
 
 _java_compile:
     mkdir -p benchmarks/java
@@ -256,6 +259,9 @@ java-fileio: _java_compile
 java-math: _java_compile
     "{{JAVA}}" -cp benchmarks/java MathBench
 
+java-crypto: _java_compile
+    "{{JAVA}}" -cp benchmarks/java CryptoBench
+
 # ============================================================================
 # Rust Benchmarks
 # ============================================================================
@@ -265,7 +271,7 @@ RUST_TARGET := ROOT + "/Rust/target/release"
 rust-build:
     mise exec -- cargo build --release --manifest-path "{{RUST_DIR}}/Cargo.toml"
 
-rust-all: rust-matrix rust-allocator rust-string rust-sort rust-concurrency rust-hash rust-regex rust-json rust-fileio rust-math
+rust-all: rust-matrix rust-allocator rust-string rust-sort rust-concurrency rust-hash rust-regex rust-json rust-fileio rust-math rust-network rust-crypto rust-ml
 
 rust-matrix: rust-build
     "{{RUST_TARGET}}/matrix"
