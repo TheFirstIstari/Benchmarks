@@ -22,59 +22,59 @@ struct BenchmarkTask {
     name: &'static str,
     language: &'static str,
     category: &'static str,
-    just_task: &'static str,
+    mise_task: &'static str,
 }
 
 fn get_tasks() -> Vec<BenchmarkTask> {
     vec![
-        BenchmarkTask { name: "c-matrix", language: "C", category: "matrix", just_task: "c-matrix" },
-        BenchmarkTask { name: "c-allocator", language: "C", category: "allocator", just_task: "c-allocator" },
-        BenchmarkTask { name: "c-string", language: "C", category: "string", just_task: "c-string" },
-        BenchmarkTask { name: "c-sort", language: "C", category: "sort", just_task: "c-sort" },
-        BenchmarkTask { name: "c-concurrency", language: "C", category: "concurrency", just_task: "c-concurrency" },
-        BenchmarkTask { name: "cpp-matrix", language: "C++", category: "matrix", just_task: "cpp-matrix" },
-        BenchmarkTask { name: "cpp-allocator", language: "C++", category: "allocator", just_task: "cpp-allocator" },
-        BenchmarkTask { name: "cpp-string", language: "C++", category: "string", just_task: "cpp-string" },
-        BenchmarkTask { name: "cpp-sort", language: "C++", category: "sort", just_task: "cpp-sort" },
-        BenchmarkTask { name: "cpp-concurrency", language: "C++", category: "concurrency", just_task: "cpp-concurrency" },
-        BenchmarkTask { name: "python-matrix", language: "Python", category: "matrix", just_task: "python-matrix" },
-        BenchmarkTask { name: "python-string", language: "Python", category: "string", just_task: "python-string" },
-        BenchmarkTask { name: "python-sort", language: "Python", category: "sort", just_task: "python-sort" },
-        BenchmarkTask { name: "python-async", language: "Python", category: "async", just_task: "python-async" },
-        BenchmarkTask { name: "java-matrix", language: "Java", category: "matrix", just_task: "java-matrix" },
-        BenchmarkTask { name: "java-string", language: "Java", category: "string", just_task: "java-string" },
-        BenchmarkTask { name: "java-sort", language: "Java", category: "sort", just_task: "java-sort" },
-        BenchmarkTask { name: "java-concurrency", language: "Java", category: "concurrency", just_task: "java-concurrency" },
-        BenchmarkTask { name: "rust-matrix", language: "Rust", category: "matrix", just_task: "rust-matrix" },
-        BenchmarkTask { name: "rust-allocator", language: "Rust", category: "allocator", just_task: "rust-allocator" },
-        BenchmarkTask { name: "rust-string", language: "Rust", category: "string", just_task: "rust-string" },
-        BenchmarkTask { name: "rust-sort", language: "Rust", category: "sort", just_task: "rust-sort" },
-        BenchmarkTask { name: "rust-concurrency", language: "Rust", category: "concurrency", just_task: "rust-concurrency" },
-        BenchmarkTask { name: "c-hash", language: "C", category: "hash", just_task: "c-hash" },
-        BenchmarkTask { name: "cpp-hash", language: "C++", category: "hash", just_task: "cpp-hash" },
-        BenchmarkTask { name: "python-hash", language: "Python", category: "hash", just_task: "python-hash" },
-        BenchmarkTask { name: "java-hash", language: "Java", category: "hash", just_task: "java-hash" },
-        BenchmarkTask { name: "rust-hash", language: "Rust", category: "hash", just_task: "rust-hash" },
-        BenchmarkTask { name: "c-regex", language: "C", category: "regex", just_task: "c-regex" },
-        BenchmarkTask { name: "cpp-regex", language: "C++", category: "regex", just_task: "cpp-regex" },
-        BenchmarkTask { name: "python-regex", language: "Python", category: "regex", just_task: "python-regex" },
-        BenchmarkTask { name: "java-regex", language: "Java", category: "regex", just_task: "java-regex" },
-        BenchmarkTask { name: "rust-regex", language: "Rust", category: "regex", just_task: "rust-regex" },
-        BenchmarkTask { name: "c-json", language: "C", category: "json", just_task: "c-json" },
-        BenchmarkTask { name: "cpp-json", language: "C++", category: "json", just_task: "cpp-json" },
-        BenchmarkTask { name: "python-json", language: "Python", category: "json", just_task: "python-json" },
-        BenchmarkTask { name: "java-json", language: "Java", category: "json", just_task: "java-json" },
-        BenchmarkTask { name: "rust-json", language: "Rust", category: "json", just_task: "rust-json" },
-        BenchmarkTask { name: "c-fileio", language: "C", category: "fileio", just_task: "c-fileio" },
-        BenchmarkTask { name: "cpp-fileio", language: "C++", category: "fileio", just_task: "cpp-fileio" },
-        BenchmarkTask { name: "python-fileio", language: "Python", category: "fileio", just_task: "python-fileio" },
-        BenchmarkTask { name: "java-fileio", language: "Java", category: "fileio", just_task: "java-fileio" },
-        BenchmarkTask { name: "rust-fileio", language: "Rust", category: "fileio", just_task: "rust-fileio" },
-        BenchmarkTask { name: "c-math", language: "C", category: "math", just_task: "c-math" },
-        BenchmarkTask { name: "cpp-math", language: "C++", category: "math", just_task: "cpp-math" },
-        BenchmarkTask { name: "python-math", language: "Python", category: "math", just_task: "python-math" },
-        BenchmarkTask { name: "java-math", language: "Java", category: "math", just_task: "java-math" },
-        BenchmarkTask { name: "rust-math", language: "Rust", category: "math", just_task: "rust-math" },
+        BenchmarkTask { name: "c-matrix", language: "C", category: "matrix", mise_task: "c-matrix" },
+        BenchmarkTask { name: "c-allocator", language: "C", category: "allocator", mise_task: "c-allocator" },
+        BenchmarkTask { name: "c-string", language: "C", category: "string", mise_task: "c-string" },
+        BenchmarkTask { name: "c-sort", language: "C", category: "sort", mise_task: "c-sort" },
+        BenchmarkTask { name: "c-concurrency", language: "C", category: "concurrency", mise_task: "c-concurrency" },
+        BenchmarkTask { name: "cpp-matrix", language: "C++", category: "matrix", mise_task: "cpp-matrix" },
+        BenchmarkTask { name: "cpp-allocator", language: "C++", category: "allocator", mise_task: "cpp-allocator" },
+        BenchmarkTask { name: "cpp-string", language: "C++", category: "string", mise_task: "cpp-string" },
+        BenchmarkTask { name: "cpp-sort", language: "C++", category: "sort", mise_task: "cpp-sort" },
+        BenchmarkTask { name: "cpp-concurrency", language: "C++", category: "concurrency", mise_task: "cpp-concurrency" },
+        BenchmarkTask { name: "python-matrix", language: "Python", category: "matrix", mise_task: "python-matrix" },
+        BenchmarkTask { name: "python-string", language: "Python", category: "string", mise_task: "python-string" },
+        BenchmarkTask { name: "python-sort", language: "Python", category: "sort", mise_task: "python-sort" },
+        BenchmarkTask { name: "python-async", language: "Python", category: "async", mise_task: "python-async" },
+        BenchmarkTask { name: "java-matrix", language: "Java", category: "matrix", mise_task: "java-matrix" },
+        BenchmarkTask { name: "java-string", language: "Java", category: "string", mise_task: "java-string" },
+        BenchmarkTask { name: "java-sort", language: "Java", category: "sort", mise_task: "java-sort" },
+        BenchmarkTask { name: "java-concurrency", language: "Java", category: "concurrency", mise_task: "java-concurrency" },
+        BenchmarkTask { name: "rust-matrix", language: "Rust", category: "matrix", mise_task: "rust-matrix" },
+        BenchmarkTask { name: "rust-allocator", language: "Rust", category: "allocator", mise_task: "rust-allocator" },
+        BenchmarkTask { name: "rust-string", language: "Rust", category: "string", mise_task: "rust-string" },
+        BenchmarkTask { name: "rust-sort", language: "Rust", category: "sort", mise_task: "rust-sort" },
+        BenchmarkTask { name: "rust-concurrency", language: "Rust", category: "concurrency", mise_task: "rust-concurrency" },
+        BenchmarkTask { name: "c-hash", language: "C", category: "hash", mise_task: "c-hash" },
+        BenchmarkTask { name: "cpp-hash", language: "C++", category: "hash", mise_task: "cpp-hash" },
+        BenchmarkTask { name: "python-hash", language: "Python", category: "hash", mise_task: "python-hash" },
+        BenchmarkTask { name: "java-hash", language: "Java", category: "hash", mise_task: "java-hash" },
+        BenchmarkTask { name: "rust-hash", language: "Rust", category: "hash", mise_task: "rust-hash" },
+        BenchmarkTask { name: "c-regex", language: "C", category: "regex", mise_task: "c-regex" },
+        BenchmarkTask { name: "cpp-regex", language: "C++", category: "regex", mise_task: "cpp-regex" },
+        BenchmarkTask { name: "python-regex", language: "Python", category: "regex", mise_task: "python-regex" },
+        BenchmarkTask { name: "java-regex", language: "Java", category: "regex", mise_task: "java-regex" },
+        BenchmarkTask { name: "rust-regex", language: "Rust", category: "regex", mise_task: "rust-regex" },
+        BenchmarkTask { name: "c-json", language: "C", category: "json", mise_task: "c-json" },
+        BenchmarkTask { name: "cpp-json", language: "C++", category: "json", mise_task: "cpp-json" },
+        BenchmarkTask { name: "python-json", language: "Python", category: "json", mise_task: "python-json" },
+        BenchmarkTask { name: "java-json", language: "Java", category: "json", mise_task: "java-json" },
+        BenchmarkTask { name: "rust-json", language: "Rust", category: "json", mise_task: "rust-json" },
+        BenchmarkTask { name: "c-fileio", language: "C", category: "fileio", mise_task: "c-fileio" },
+        BenchmarkTask { name: "cpp-fileio", language: "C++", category: "fileio", mise_task: "cpp-fileio" },
+        BenchmarkTask { name: "python-fileio", language: "Python", category: "fileio", mise_task: "python-fileio" },
+        BenchmarkTask { name: "java-fileio", language: "Java", category: "fileio", mise_task: "java-fileio" },
+        BenchmarkTask { name: "rust-fileio", language: "Rust", category: "fileio", mise_task: "rust-fileio" },
+        BenchmarkTask { name: "c-math", language: "C", category: "math", mise_task: "c-math" },
+        BenchmarkTask { name: "cpp-math", language: "C++", category: "math", mise_task: "cpp-math" },
+        BenchmarkTask { name: "python-math", language: "Python", category: "math", mise_task: "python-math" },
+        BenchmarkTask { name: "java-math", language: "Java", category: "math", mise_task: "java-math" },
+        BenchmarkTask { name: "rust-math", language: "Rust", category: "math", mise_task: "rust-math" },
 
     ]
 }
@@ -148,9 +148,9 @@ fn parse_results(output: &str, language: &str, category: &str) -> Vec<BenchmarkR
     results
 }
 
-fn run_just_task(task: &str) -> (bool, String, f64) {
+fn run_mise_task(task: &str) -> (bool, String, f64) {
     let start = Instant::now();
-    let output = Command::new("just")
+    let output = Command::new("mise")
         .arg(task)
         .output();
     
@@ -163,7 +163,7 @@ fn run_just_task(task: &str) -> (bool, String, f64) {
             let combined = format!("{}\n{}", stdout, stderr);
             (out.status.success(), combined, elapsed)
         }
-        Err(e) => (false, format!("Failed to run just: {}", e), elapsed),
+        Err(e) => (false, format!("Failed to run mise: {}", e), elapsed),
     }
 }
 
@@ -199,7 +199,7 @@ fn main() {
         print!("[{}/{}] {}... ", task.language, task.category, task.name);
         std::io::Write::flush(&mut std::io::stdout()).ok();
         
-        let (success, output, elapsed) = run_just_task(task.just_task);
+        let (success, output, elapsed) = run_mise_task(task.mise_task);
         
         if success {
             let results = parse_results(&output, task.language, task.category);
@@ -233,5 +233,5 @@ fn main() {
     }
     println!("═══════════════════════════════════════════════════════════════════════\n");
     
-    println!("View results with: just monitor");
+    println!("View results with: mise monitor");
 }

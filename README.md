@@ -4,8 +4,8 @@ A comprehensive benchmark suite comparing performance across multiple programmin
 
 ## Features
 
-- **Multi-language support**: C (clang/gcc), C++ (clang/g++), Rust, Python, Java
-- **9 benchmark categories**: Matrix, Sort, Hash, Regex, JSON, File I/O, Math, Network, ML
+- **Multi-language support**: C (clang), C++ (clang), Rust, Python, Java
+- **12 benchmark categories**: Matrix, Sort, String, Hash, Regex, JSON, File I/O, Math, Network, Crypto, ML, Concurrency
 - **Interactive TUI**: Graph and table views with statistical analysis
 - **SQLite storage**: Persistent benchmark result history
 - **Row selection**: Navigate and drill down into specific benchmarks
@@ -15,19 +15,21 @@ A comprehensive benchmark suite comparing performance across multiple programmin
 
 ```bash
 # Install dependencies
-just install
+mise install
+
+# Compile all benchmarks (do this once before running)
+mise compile
 
 # Run all benchmarks
-just all
+mise all
 
 # View results in TUI
-just monitor
+mise monitor
 ```
 
 ## Requirements
 
-- **just** - Task runner (`brew install just`)
-- **mise** - Language version manager (`brew install mise`)
+- **mise** - Language version manager and task runner (`brew install mise`)
 - **C/C++** - GCC or Clang with optimizations
 - **Python** - 3.x with numpy
 - **Rust** - Latest stable
@@ -36,36 +38,60 @@ just monitor
 ## Benchmark Commands
 
 ```bash
-# All benchmarks
-just all
+# Compile all (before running)
+mise compile
 
-# All languages for a category
-just matrix-all
-just sort-all
-just hash-all
-just json-all
-just network-all
+# Run all benchmarks (compile + execute)
+mise all
 
-# By language (clang)
-just c-matrix
-just c-sort
-just c-hash
-just cpp-matrix
-
-# By language (gcc)
-just gcc-matrix
-just gxx-matrix
+# Run only (requires compiled binaries)
+mise run-all-benchmarks
 
 # By language
-just rust-matrix
-just python-matrix
-just python-json-multi  # Compare stdlib json vs ujson vs orjson
-just java-matrix
+mise c-run          # Compile + run all C benchmarks
+mise cpp-run        # Compile + run all C++ benchmarks
+mise rust-run       # Compile + run all Rust benchmarks
+mise python-all     # Run all Python benchmarks
+mise java-run       # Compile + run all Java benchmarks
+
+# Compile by language
+mise c-compile
+mise cpp-compile
+mise rust-compile
+mise java-compile
+
+# Individual benchmarks (requires compilation first)
+mise c-matrix
+mise rust-sort
+mise python-hash
+```
+
+### By Category
+
+```bash
+mise matrix-all      # Run all matrix benchmarks
+mise sort-all        # Run all sort benchmarks
+mise hash-all        # Run all hash benchmarks
+mise regex-all       # Run all regex benchmarks
+mise json-all        # Run all json benchmarks
+mise fileio-all      # Run all file I/O benchmarks
+mise math-all        # Run all math benchmarks
+mise network-all     # Run all network benchmarks
+mise crypto-all      # Run all crypto benchmarks
+mise ml-all          # Run all ML benchmarks
+```
+
+### Tools
+
+```bash
+mise monitor         # Launch interactive TUI
+mise store           # List stored benchmark runs
+mise runner          # Run benchmarks with automatic result storage
 ```
 
 ## Monitor TUI
 
-Run `just monitor` to launch the interactive TUI:
+Run `mise monitor` to launch the interactive TUI:
 
 | Key | Action |
 |-----|--------|
@@ -98,14 +124,13 @@ Benchmarks/
 │   ├── runner.rs   # Benchmark runner
 │   ├── lib.rs      # Database & types
 │   └── Cargo.toml
-├── justfile        # Task definitions
-├── mise.toml       # Tool versions
+├── mise.toml       # Tool versions & task definitions
 └── README.md
 ```
 
 ## Optimization Flags
 
-- **C/C++**: `-Ofast -march=native` (maximum compiler optimizations including `-ffast-math`)
+- **C/C++**: `-O3 -ffast-math -march=native` (maximum compiler optimizations)
 - **Rust**: `opt-level = 3, lto = "fat", codegen-units = 1`
 - **Java**: JIT warmup enabled before timing
 
@@ -114,20 +139,23 @@ Benchmarks/
 | Category | Tests |
 |----------|-------|
 | **Matrix** | Multiply, Transpose, Add (2000x2000 float matrices) |
-| **Sort** | Qsort, Quicksort, Heapsort, Mergesort (1M integers) |
-| **Hash** | SDBM, DJB2, FNV (1M iterations) |
+| **Sort** | Qsort, Quicksort, Heapsort, Mergesort (5M integers) |
+| **String** | Concatenation, Split, Replace, Search |
+| **Hash** | SDBM, DJB2, FNV (10K iterations) |
 | **Regex** | Find, Count, Email pattern match |
 | **JSON** | Parse, Serialize, Count fields (1MB payload) |
 | **File I/O** | Write, Read, Read lines, Random access (5MB files) |
-| **Math** | Trig (sin/cos), Exp/Log, Arithmetic (x*x, x*x*x) |
+| **Math** | Trig (sin/cos), Exp/Log, Arithmetic |
 | **Network** | Pipe throughput, Memcpy 8K |
+| **Crypto** | XOR, Integer ops |
 | **ML** | Element-wise mul, Dot product, Lerp, Sigmoid |
+| **Concurrency** | Thread pool, Atomic counter |
 
 ## Adding New Benchmarks
 
 1. Add source file to each language directory
-2. Add just recipe to `justfile`
-3. Rebuild tools if needed: `just tools-build`
+2. Add tasks to `mise.toml` with `*-compile` and `*` (run) variants
+3. Rebuild tools if needed: `mise tools-build`
 
 ## Sharing Results
 

@@ -113,7 +113,7 @@ fn get_row_count(stats: &[BenchmarkStats]) -> usize {
 #[derive(Clone)]
 struct TestBatch {
     name: String,
-    just_tasks: Vec<String>,
+    mise_tasks: Vec<String>,
     enabled: bool,
 }
 
@@ -149,48 +149,37 @@ impl App {
         let stats = db.get_stats(None).unwrap_or_default();
         
         let batches = vec![
-            TestBatch { name: "All".to_string(), just_tasks: vec!["all".to_string()], enabled: false },
-            TestBatch { name: "C (clang)".to_string(), just_tasks: vec![
+            TestBatch { name: "All".to_string(), mise_tasks: vec!["all".to_string()], enabled: false },
+            TestBatch { name: "C".to_string(), mise_tasks: vec![
                 "c-matrix".to_string(), "c-sort".to_string(), "c-string".to_string(),
                 "c-hash".to_string(), "c-regex".to_string(), "c-json".to_string(),
                 "c-fileio".to_string(), "c-math".to_string(), "c-network".to_string(),
                 "c-crypto".to_string(), "c-ml".to_string(), "c-concurrency".to_string(),
             ], enabled: true },
-            TestBatch { name: "C (gcc)".to_string(), just_tasks: vec![
-                "gcc-matrix".to_string(), "gcc-sort".to_string(), "gcc-string".to_string(),
-                "gcc-hash".to_string(), "gcc-regex".to_string(),
-            ], enabled: true },
-            TestBatch { name: "C++ (clang)".to_string(), just_tasks: vec![
+            TestBatch { name: "C++".to_string(), mise_tasks: vec![
                 "cpp-matrix".to_string(), "cpp-sort".to_string(), "cpp-string".to_string(),
                 "cpp-hash".to_string(), "cpp-regex".to_string(), "cpp-json".to_string(),
                 "cpp-fileio".to_string(), "cpp-math".to_string(), "cpp-network".to_string(),
                 "cpp-crypto".to_string(), "cpp-concurrency".to_string(),
             ], enabled: true },
-            TestBatch { name: "C++ (gcc)".to_string(), just_tasks: vec![
-                "gxx-matrix".to_string(), "gxx-sort".to_string(), "gxx-string".to_string(),
-                "gxx-hash".to_string(), "gxx-regex".to_string(),
-            ], enabled: true },
-            TestBatch { name: "Rust".to_string(), just_tasks: vec![
+            TestBatch { name: "Rust".to_string(), mise_tasks: vec![
                 "rust-matrix".to_string(), "rust-sort".to_string(), "rust-string".to_string(),
                 "rust-hash".to_string(), "rust-regex".to_string(), "rust-json".to_string(),
                 "rust-fileio".to_string(), "rust-math".to_string(), "rust-network".to_string(),
                 "rust-crypto".to_string(), "rust-ml".to_string(), "rust-concurrency".to_string(),
             ], enabled: true },
-            TestBatch { name: "Python".to_string(), just_tasks: vec![
+            TestBatch { name: "Python".to_string(), mise_tasks: vec![
                 "python-matrix".to_string(), "python-sort".to_string(), "python-string".to_string(),
                 "python-hash".to_string(), "python-regex".to_string(), "python-json".to_string(),
                 "python-fileio".to_string(), "python-math".to_string(), "python-network".to_string(),
                 "python-crypto".to_string(), "python-ml".to_string(), "python-async".to_string(),
             ], enabled: true },
-            TestBatch { name: "Java".to_string(), just_tasks: vec![
+            TestBatch { name: "Java".to_string(), mise_tasks: vec![
                 "java-matrix".to_string(), "java-sort".to_string(), "java-string".to_string(),
                 "java-hash".to_string(), "java-regex".to_string(), "java-json".to_string(),
                 "java-fileio".to_string(), "java-math".to_string(), "java-crypto".to_string(),
                 "java-concurrency".to_string(),
             ], enabled: true },
-            TestBatch { name: "C#".to_string(), just_tasks: vec![
-                "cs-matrix".to_string(), "cs-sort".to_string(), "cs-string".to_string(),
-            ], enabled: false },
         ];
         
         Self {
@@ -212,7 +201,7 @@ impl App {
     
     fn run_selected(&mut self) {
         let enabled: Vec<_> = self.batches.iter().filter(|b| b.enabled).collect();
-        let total_tasks = enabled.iter().map(|b| b.just_tasks.len()).sum::<usize>();
+        let total_tasks = enabled.iter().map(|b| b.mise_tasks.len()).sum::<usize>();
         let total = total_tasks * ITERATIONS;
         
         if total_tasks == 0 {
@@ -227,7 +216,7 @@ impl App {
         let mut total_results = 0;
         
         for batch in &enabled {
-            for task in &batch.just_tasks {
+            for task in &batch.mise_tasks {
                 let category = if task.contains("matrix") {
                     "matrix"
                 } else if task.contains("sort") {
@@ -268,7 +257,7 @@ impl App {
                     print!("\rRunning {} iter {}/{}... ", task, iter + 1, ITERATIONS);
                     io::stdout().flush().ok();
                     
-                    let output = Command::new("just").arg(task).output();
+                    let output = Command::new("mise").arg(task).output();
                     
                     match output {
                         Ok(out) if out.status.success() => {
@@ -783,7 +772,7 @@ fn render_select(frame: &mut ratatui::Frame, area: Rect, app: &mut App) {
         };
         ratatui::widgets::Row::new(vec![
             Span::raw(format!("{}{}", Span::styled(marker, marker_style), batch.name)),
-            Span::raw(format!(" ({} tasks)", batch.just_tasks.len())),
+            Span::raw(format!(" ({} tasks)", batch.mise_tasks.len())),
         ]).style(style)
     }).collect();
     
@@ -794,7 +783,7 @@ fn render_select(frame: &mut ratatui::Frame, area: Rect, app: &mut App) {
     
     let enabled_count = app.batches.iter().filter(|b| b.enabled).count();
     let enabled_tasks = app.batches.iter().filter(|b| b.enabled)
-        .map(|b| b.just_tasks.len()).sum::<usize>();
+        .map(|b| b.mise_tasks.len()).sum::<usize>();
     
     let footer = ratatui::widgets::Paragraph::new(vec![
         Line::from(vec![
@@ -886,7 +875,7 @@ fn main() {
             execute!(io::stdout(), LeaveAlternateScreen).ok();
             terminal::disable_raw_mode().ok();
             eprintln!("Failed to initialize terminal: {}", e);
-            eprintln!("The monitor requires an interactive terminal. Try running: just monitor");
+            eprintln!("The monitor requires an interactive terminal. Try running: mise monitor");
             std::process::exit(1);
         }
     };
