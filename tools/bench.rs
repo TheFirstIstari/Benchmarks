@@ -303,15 +303,32 @@ fn fmt_time(ms: f64) -> String {
     }
 }
 
+#[derive(Clone, Copy)]
+struct Stat {
+    avg_ms: f64,
+    min_ms: f64,
+    max_ms: f64,
+    std_dev_ms: f64,
+    runs: i32,
+}
+
 struct App {
     db: Database,
     stats: Vec<bench_tools::BenchmarkStats>,
     tests: Vec<String>,
     langs: Vec<String>,
-    /// test_name → (lang → avg_ms)
-    grid: HashMap<String, HashMap<String, f64>>,
+    /// test_name → (lang → Stat)
+    grid: HashMap<String, HashMap<String, Stat>>,
+    /// category → Vec<test_name>
+    cat_tests: HashMap<String, Vec<String>>,
+    /// test_name → category
+    test_cat: HashMap<String, String>,
+    categories: Vec<String>,
     selected: usize,
     show_bars: bool,
+    /// None = overview, Some(cat) = sub-benchmark detail view
+    detail_cat: Option<String>,
+    detail_selected: usize,
 }
 
 impl App {
@@ -323,8 +340,13 @@ impl App {
             tests: Vec::new(),
             langs: Vec::new(),
             grid: HashMap::new(),
+            cat_tests: HashMap::new(),
+            test_cat: HashMap::new(),
+            categories: Vec::new(),
             selected: 0,
             show_bars: false,
+            detail_cat: None,
+            detail_selected: 0,
         };
         app.refresh();
         app
@@ -333,35 +355,53 @@ impl App {
     fn refresh(&mut self) {
         self.stats = self.db.get_stats(None).unwrap_or_default();
 
-        // Build grid
+        // Build grid + category mappings
         self.grid.clear();
+        self.cat_tests.clear();
+        self.test_cat.clear();
         let mut tests_set: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
         let mut langs_set: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
+        let mut cats_set: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
 
         for s in &self.stats {
             tests_set.insert(s.test_name.clone());
             langs_set.insert(s.language.clone());
+            cats_set.insert(s.category.clone());
+            self.test_cat.insert(s.test_name.clone(), s.category.clone());
+            self.cat_tests.entry(s.category.clone()).or_default().push(s.test_name.clone());
             self.grid
                 .entry(s.test_name.clone())
                 .or_default()
-                .insert(s.language.clone(), s.avg_ms);
+                .insert(s.language.clone(), Stat {
+                    avg_ms: s.avg_ms,
+                    min_ms: s.min_ms,
+                    max_ms: s.max_ms,
+                    std_dev_ms: s.std_dev_ms,
+                    runs: s.runs,
+                });
         }
 
         self.tests = tests_set.into_iter().collect();
         self.langs = langs_set.into_iter().collect();
+        self.categories = cats_set.into_iter().collect();
         if self.selected >= self.tests.len() {
             self.selected = self.tests.len().saturating_sub(1);
         }
     }
 
     fn fastest(&self, test: &str) -> Option<f64> {
-        self.grid.get(test)?.values().fold(None, |acc, &v| {
+        self.grid.get(test)?.values().fold(None, |acc, v| {
             match acc {
-                None => Some(v),
-                Some(min) if v < min => Some(v),
+                None => Some(v.avg_ms),
+                Some(min) if v.avg_ms < min => Some(v.avg_ms),
                 other => other,
             }
         })
+    }
+
+    /// Get sub-tests for a category (test_names belonging to that category)
+    fn sub_tests(&self, cat: &str) -> Vec<String> {
+        self.cat_tests.get(cat).cloned().unwrap_or_default()
     }
 }
 
@@ -388,17 +428,25 @@ fn render_table(frame: &mut ratatui::Frame, area: Rect, app: &App) {
     for (_i, test) in app.tests.iter().enumerate() {
         let fastest = app.fastest(test).unwrap_or(f64::MAX);
 
-        let mut cells = vec![Span::raw(test.clone())];
+        // Show category as prefix for context
+        let cat = app.test_cat.get(test).map(|s| s.as_str()).unwrap_or("?");
+        let mut cells = vec![Span::raw(format!("{:<8} {}", cat, test))];
         for l in &app.langs {
-            if let Some(&ms) = app.grid.get(test).and_then(|m| m.get(l)) {
-                let is_fastest = (ms - fastest).abs() < fastest * 1e-9;
+            if let Some(st) = app.grid.get(test).and_then(|m| m.get(l)) {
+                let is_fastest = (st.avg_ms - fastest).abs() < fastest * 1e-9;
+                let spread = st.max_ms - st.min_ms;
+                let err_str = if st.runs > 1 && spread > 0.0 {
+                    format!("±{}", fmt_time(spread / 2.0))
+                } else {
+                    String::new()
+                };
                 if is_fastest {
                     cells.push(Span::styled(
-                        format!(" {:>9}★", fmt_time(ms)),
+                        format!(" {:>6}★{}", fmt_time(st.avg_ms), if err_str.is_empty() { String::new() } else { format!(" {}", err_str) }),
                         Style::default().fg(Color::Green).add_modifier(Modifier::BOLD),
                     ));
                 } else {
-                    let ratio = ms / fastest;
+                    let ratio = st.avg_ms / fastest;
                     let color = if ratio > 10.0 {
                         Color::DarkGray
                     } else if ratio > 3.0 {
@@ -407,7 +455,7 @@ fn render_table(frame: &mut ratatui::Frame, area: Rect, app: &App) {
                         Color::White
                     };
                     cells.push(Span::styled(
-                        format!(" {:>8}x", ratio),
+                        format!(" {:>6}x {}", ratio, err_str),
                         Style::default().fg(color),
                     ));
                 }
@@ -444,24 +492,61 @@ fn render_bars(frame: &mut ratatui::Frame, area: Rect, app: &App) {
     let test = &app.tests[app.selected];
     let fastest = app.fastest(test).unwrap_or(1.0);
 
-    let title = format!(" {} — fastest: {} ", test, fmt_time(fastest));
-
-    let bar_data: Vec<(&str, u64)> = app.langs.iter()
+    // Build bar data with error info
+    struct BarEntry { lang: String, val: u64, lo: u64, hi: u64, runs: i32 }
+    let bars: Vec<BarEntry> = app.langs.iter()
         .filter_map(|l| {
-            let ms = app.grid.get(test)?.get(l)?;
-            let ratio = ms / fastest;
-            let bar_val = (100.0 / ratio) as u64;
-            Some((l.as_str(), bar_val))
+            let st = app.grid.get(test)?.get(l)?;
+            let ratio = st.avg_ms / fastest;
+            let val = (100.0 / ratio) as u64;
+            // error bars as ratio of fastest
+            let lo_ratio = st.min_ms / fastest;
+            let hi_ratio = st.max_ms / fastest;
+            let lo = (100.0 / hi_ratio) as u64; // slower = smaller bar
+            let hi = (100.0 / lo_ratio) as u64; // faster = bigger bar
+            Some(BarEntry { lang: l.clone(), val, lo, hi, runs: st.runs })
         })
         .collect();
 
-    if bar_data.is_empty() {
-        frame.render_widget(
-            Paragraph::new("No data for this benchmark"),
-            area,
-        );
+    if bars.is_empty() {
+        frame.render_widget(Paragraph::new("No data for this benchmark"), area);
         return;
     }
+
+    // Title with error info
+    let n_runs = bars.first().map(|b| b.runs).unwrap_or(0);
+    let title = if n_runs > 1 {
+        format!(" {} — fastest: {} ({} runs, [min..max] shown) ", test, fmt_time(fastest), n_runs)
+    } else {
+        format!(" {} — fastest: {} ", test, fmt_time(fastest))
+    };
+
+    // Use simple bar chart with value labels showing avg ± spread
+    let bar_data: Vec<(&str, u64)> = bars.iter()
+        .map(|b| (b.lang.as_str(), b.val))
+        .collect();
+
+    // Build extra info as text below the chart
+    let info_lines: Vec<Line> = bars.iter().map(|b| {
+        let st = app.grid.get(test).and_then(|m| m.get(&b.lang)).unwrap();
+        let spread = st.max_ms - st.min_ms;
+        Line::from(vec![
+            Span::styled(format!("{:<8}", b.lang), Style::default().fg(lang_color(&b.lang))),
+            Span::raw(format!("  avg: {}", fmt_time(st.avg_ms))),
+            if spread > 0.0 {
+                Span::raw(format!("  [{}..{}]", fmt_time(st.min_ms), fmt_time(st.max_ms)))
+            } else {
+                Span::raw("")
+            },
+            Span::raw(format!("  σ={}", fmt_time(st.std_dev_ms))),
+        ])
+    }).collect();
+
+    // Split area: top 60% for bars, bottom 40% for error stats
+    let sub = Layout::default()
+        .direction(ratatui::layout::Direction::Vertical)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)])
+        .split(area);
 
     let chart = BarChart::default()
         .block(Block::default().borders(Borders::ALL).title(title))
@@ -472,7 +557,81 @@ fn render_bars(frame: &mut ratatui::Frame, area: Rect, app: &App) {
         .label_style(Style::default().fg(Color::White))
         .value_style(Style::default().fg(Color::Black).add_modifier(Modifier::BOLD));
 
-    frame.render_widget(chart, area);
+    frame.render_widget(chart, sub[0]);
+
+    // Error stats panel
+    let stats_block = Block::default()
+        .borders(Borders::ALL)
+        .title(" Error bars (min..max, σ std dev) ");
+    let stats_para = Paragraph::new(info_lines)
+        .block(stats_block)
+        .style(Style::default().fg(Color::White));
+    frame.render_widget(stats_para, sub[1]);
+}
+
+fn render_detail(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+    let cat = app.detail_cat.as_ref().unwrap();
+    let sub_tests = app.sub_tests(cat);
+
+    if sub_tests.is_empty() {
+        frame.render_widget(Paragraph::new("No sub-tests for this category"), area);
+        return;
+    }
+
+    // Find fastest per sub-test across languages
+    let mut rows: Vec<Row> = Vec::new();
+    let mut header_cells = vec![Span::styled("Sub-test", Style::default().add_modifier(Modifier::BOLD))];
+    for l in &app.langs {
+        header_cells.push(Span::styled(
+            format!(" {:>10}", l),
+            Style::default().fg(lang_color(l)).add_modifier(Modifier::BOLD),
+        ));
+    }
+    let header = Row::new(vec![Line::from(header_cells)]);
+
+    for test in &sub_tests {
+        let fastest = app.fastest(test).unwrap_or(f64::MAX);
+        let mut cells = vec![Span::raw(test.clone())];
+        for l in &app.langs {
+            if let Some(st) = app.grid.get(test).and_then(|m| m.get(l)) {
+                let is_fastest = (st.avg_ms - fastest).abs() < fastest * 1e-9;
+                if is_fastest {
+                    cells.push(Span::styled(
+                        format!(" {:>9}★", fmt_time(st.avg_ms)),
+                        Style::default().fg(Color::Green).add_modifier(Modifier::BOLD),
+                    ));
+                } else {
+                    let ratio = st.avg_ms / fastest;
+                    let color = if ratio > 10.0 { Color::DarkGray }
+                        else if ratio > 3.0 { Color::Yellow }
+                        else { Color::White };
+                    cells.push(Span::styled(
+                        format!(" {:>8}x", ratio),
+                        Style::default().fg(color),
+                    ));
+                }
+            } else {
+                cells.push(Span::styled(" {:>10}", Style::default().fg(Color::DarkGray)));
+            }
+        }
+        rows.push(Row::new(vec![Line::from(cells)]));
+    }
+
+    let mut widths = vec![Constraint::Length(20)];
+    for _ in &app.langs {
+        widths.push(Constraint::Length(12));
+    }
+
+    let mut state = TableState::default();
+    state.select(Some(app.detail_selected));
+
+    let title = format!(" {} — sub-benchmarks (Enter=back) ", cat);
+    let table = Table::new(rows, widths)
+        .header(header)
+        .block(Block::default().borders(Borders::ALL).title(title))
+        .highlight_style(Style::default().bg(Color::DarkGray));
+
+    frame.render_stateful_widget(table, area, &mut state);
 }
 
 fn render_footer(frame: &mut ratatui::Frame, area: Rect, app: &App) {
@@ -525,7 +684,9 @@ fn run_tui() {
                 .split(size);
 
             render_header(f, chunks[0]);
-            if app.show_bars {
+            if app.detail_cat.is_some() {
+                render_detail(f, chunks[1], &app);
+            } else if app.show_bars {
                 render_bars(f, chunks[1], &app);
             } else {
                 render_table(f, chunks[1], &app);
@@ -555,6 +716,23 @@ fn run_tui() {
                 }
                 KeyCode::Tab => {
                     app.show_bars = !app.show_bars;
+                }
+                KeyCode::Enter => {
+                    // Toggle detail view for selected benchmark's category
+                    if app.detail_cat.is_some() {
+                        app.detail_cat = None;
+                    } else if let Some(test) = app.tests.get(app.selected) {
+                        if let Some(cat) = app.test_cat.get(test) {
+                            let sub = app.sub_tests(cat);
+                            if sub.len() > 1 {
+                                app.detail_cat = Some(cat.clone());
+                                app.detail_selected = 0;
+                            }
+                        }
+                    }
+                }
+                KeyCode::Backspace => {
+                    app.detail_cat = None;
                 }
                 KeyCode::Char('R') => {
                     app.refresh();
