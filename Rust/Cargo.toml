@@ -63,3 +63,7 @@ path = "crypto.rs"
 [[bin]]
 name = "ml"
 path = "ml.rs"
+
+[[bin]]
+name = "cpu"
+path = "cpu.rs"

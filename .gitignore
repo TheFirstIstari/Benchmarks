@@ -22,3 +22,10 @@ Thumbs.db
 # Misc
 *.log
 .env
+
+|# MemPalace per-project files (issue #185)
+mempalace.yaml
+entities.json
+
+# jpeg is a standalone repo at github.com/TheFirstIstari/jpeg-bench
+/jpeg/

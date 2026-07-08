@@ -1,0 +1,72 @@
+{
+  "C": {
+    "raw": "C CPU Benchmark\nApple M4 \u2014 10 cores (4P+6E), 16GB unified\n\n--- Integer Arithmetic ---\ncpu_fibonacci: 2.62 ms (3811277723 ops/sec)\ncpu_prime_sieve: 17.41 ms (664579 primes)\ncpu_popcount: 3.66 ms (2735198337 ops/sec)\n\n--- Branch Prediction ---\ncpu_branch_sorted: 44.99 ms\ncpu_branch_unsorted: 277.39 ms (6.2x slower)\n\n--- Memory Latency ---\ncpu_memory_latency: 4846.73 ms (10316242 traversals/sec)\n\n--- SIMD Vectorization ---\ncpu_simd_neon: 17.86 ms (699972908 ops/sec)\n\n--- Atomic Operations ---\ncpu_atomic_add: 16.07 ms (622180744 ops/sec)\ncpu_nonatomic_add: 2.29 ms (4359593198 ops/sec, 7.0x faster)\n",
+    "parsed": {
+      "fibonacci": 2.62,
+      "prime_sieve": 17.41,
+      "popcount": 3.66,
+      "branch_sorted": 44.99,
+      "branch_unsorted": 277.39,
+      "memory_latency": 4846.73,
+      "simd_neon": 17.86,
+      "atomic_add": 16.07,
+      "nonatomic_add": 2.29
+    }
+  },
+  "C++": {
+    "raw": "C++ CPU Benchmark\nApple M4 \u2014 10 cores (4P+6E), 16GB unified\n\n--- Integer Arithmetic ---\ncpu_fibonacci: 3.67 ms (2721304659 ops/sec)\ncpu_prime_sieve: 17.91 ms (664579 primes)\ncpu_popcount: 4.07 ms (2455871067 ops/sec)\n\n--- Branch Prediction ---\ncpu_branch_unsorted: 267.86 ms\ncpu_branch_sorted: 24.77 ms (10.8x faster)\n\n--- Memory Latency ---\ncpu_memory_latency: 4615.56 ms (10832915 traversals/sec)\n\n--- SIMD Vectorization ---\ncpu_simd_neon: 50.48 ms (247643464 ops/sec)\n\n--- Atomic Operations ---\ncpu_atomic_add: 17.86 ms (560054128 ops/sec)\ncpu_nonatomic_add: 3.17 ms (3156606509 ops/sec, 5.6x faster)\n",
+    "parsed": {
+      "fibonacci": 3.67,
+      "prime_sieve": 17.91,
+      "popcount": 4.07,
+      "branch_unsorted": 267.86,
+      "branch_sorted": 24.77,
+      "memory_latency": 4615.56,
+      "simd_neon": 50.48,
+      "atomic_add": 17.86,
+      "nonatomic_add": 3.17
+    }
+  },
+  "Rust": {
+    "raw": "Rust CPU Benchmark\nApple M4 \u2014 10 cores (4P+6E), 16GB unified\n\n--- Integer Arithmetic ---\ncpu_fibonacci: 7.18 ms (1392789861 ops/sec)\ncpu_prime_sieve: 18.99 ms (664579 primes)\ncpu_popcount: 0.75 ms (13378660234 ops/sec)\n\n--- Branch Prediction ---\ncpu_branch_unsorted: 80.67 ms\ncpu_branch_sorted: 13.23 ms (6.1x faster)\n\n--- Memory Latency ---\ncpu_memory_latency: 4834.49 ms (10342361 traversals/sec)\n\n--- SIMD Vectorization ---\ncpu_simd_neon: 15.51 ms (806070264 ops/sec)\n\n--- Atomic Operations ---\ncpu_atomic_add: 19.16 ms (521878667 ops/sec)\ncpu_nonatomic_add: 2.54 ms (3933651880 ops/sec, 7.5x faster)\n",
+    "parsed": {
+      "fibonacci": 7.18,
+      "prime_sieve": 18.99,
+      "popcount": 0.75,
+      "branch_unsorted": 80.67,
+      "branch_sorted": 13.23,
+      "memory_latency": 4834.49,
+      "simd_neon": 15.51,
+      "atomic_add": 19.16,
+      "nonatomic_add": 2.54
+    }
+  },
+  "Java": {
+    "raw": "Java CPU Benchmark\nApple M4 \u2014 10 cores (4P+6E), 16GB unified\n\n--- Integer Arithmetic ---\ncpu_fibonacci: 0.32 ms (30899961375 ops/sec)\ncpu_prime_sieve: 20.38 ms (664579 primes)\ncpu_popcount: 0.00 ms (Infinity ops/sec)\n\n--- Branch Prediction ---\ncpu_branch_unsorted: 217.01 ms\ncpu_branch_sorted: 21.84 ms (9.9x faster)\n\n--- Memory Latency ---\ncpu_memory_latency: 4800.22 ms (10416186 traversals/sec)\n\n--- SIMD Vectorization ---\ncpu_simd_auto_vec: 8.68 ms (5759760836 ops/sec)\n  [check: total=332856140234752.0]\n\n--- Atomic Operations ---\ncpu_atomic_add: 18.01 ms (555122529 ops/sec)\ncpu_nonatomic_add: 0.00 ms (238095238095238 ops/sec, 428905.7x faster)\n",
+    "parsed": {
+      "fibonacci": 0.32,
+      "prime_sieve": 20.38,
+      "popcount": 0.0,
+      "branch_unsorted": 217.01,
+      "branch_sorted": 21.84,
+      "memory_latency": 4800.22,
+      "simd_auto_vec": 8.68,
+      "atomic_add": 18.01,
+      "nonatomic_add": 0.0
+    }
+  },
+  "Python": {
+    "raw": "Python CPU Benchmark\nApple M4 \u2014 10 cores (4P+6E), 16GB unified\n\n--- Integer Arithmetic ---\ncpu_fibonacci: 58.45 ms (1710887 ops/sec)\ncpu_prime_sieve: 16.39 ms (78498 primes)\ncpu_popcount: 12.69 ms (15766498 ops/sec)\n\n--- Branch Prediction ---\ncpu_branch_unsorted: 26.94 ms\ncpu_branch_sorted: 16.81 ms (1.6x faster)\n\n--- Memory Latency ---\ncpu_memory_latency: 961.19 ms (5201894 traversals/sec)\n\n--- SIMD Vectorization ---\ncpu_simd_numpy: 2.59 ms (1931931136 ops/sec)\n\n--- Atomic Operations ---\ncpu_atomic_locked: 108.97 ms (18353388 ops/sec)\ncpu_nonatomic_add: 21.93 ms (91193033 ops/sec, 5.0x faster)\n",
+    "parsed": {
+      "fibonacci": 58.45,
+      "prime_sieve": 16.39,
+      "popcount": 12.69,
+      "branch_unsorted": 26.94,
+      "branch_sorted": 16.81,
+      "memory_latency": 961.19,
+      "simd_numpy": 2.59,
+      "atomic_locked": 108.97,
+      "nonatomic_add": 21.93
+    }
+  }
+}
