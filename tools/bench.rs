@@ -160,7 +160,7 @@ fn parse_time_line(line: &str) -> Option<(String, f64)> {
     let caps = re.captures(line)?;
     let name = caps.get(1)?.as_str().trim().to_string();
     let ms: f64 = caps.get(2)?.as_str().parse().ok()?;
-    if ms <= 0.0 || !ms.is_finite() {
+    if !ms.is_finite() {
         return None;
     }
     Some((name, ms))

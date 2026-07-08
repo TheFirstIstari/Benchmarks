@@ -3,6 +3,7 @@ python = "3.13.2"
 rust = "stable"
 dotnet = "9.0.203"
 java = "openjdk-21"
+go = "latest"
 
 [settings]
 python.uv_venv_auto = true
@@ -418,7 +419,7 @@ run = "python Python/json_multi.py"
 depends = ["java-matrix", "java-string", "java-sort", "java-concurrency", "java-hash", "java-regex", "java-json", "java-fileio", "java-math", "java-crypto", "java-cpu"]
 
 [tasks.java-compile]
-run = ["mkdir -p benchmarks/java", "javac -d benchmarks/java Java/MatrixBench.java Java/StringBench.java Java/SortBench.java Java/ConcurrencyBench.java Java/HashBench.java Java/RegexBench.java Java/JsonBench.java Java/FileIOBench.java Java/MathBench.java Java/CpuBench.java"]
+run = ["mkdir -p benchmarks/java", "javac -d benchmarks/java Java/MatrixBench.java Java/StringBench.java Java/SortBench.java Java/ConcurrencyBench.java Java/HashBench.java Java/RegexBench.java Java/JsonBench.java Java/FileIOBench.java Java/MathBench.java Java/CpuBench.java Java/CryptoBench.java Java/NetworkBench.java"]
 
 [tasks.java-matrix]
 run = "java -cp benchmarks/java MatrixBench"
