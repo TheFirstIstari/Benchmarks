@@ -147,11 +147,13 @@ fn parse_output(output: &str, lang: &str, cat: &str) -> Vec<BenchmarkResult> {
     out
 }
 
+use std::sync::OnceLock;
+
 fn parse_time_line(line: &str) -> Option<(String, f64)> {
-    // Match "Name: 123.45 ms" or "Name: 123.45 ms (...)"
-    let re = regex::Regex::new(
-        r"^([a-zA-Z0-9_ ]+?):\s*([\d.]+)\s*ms"
-    ).ok()?;
+    static RE: OnceLock<regex::Regex> = OnceLock::new();
+    let re = RE.get_or_init(|| {
+        regex::Regex::new(r"^([a-zA-Z0-9_ ]+?):\s*([\d.]+)\s*ms").unwrap()
+    });
 
     let caps = re.captures(line)?;
     let name = caps.get(1)?.as_str().trim().to_string();
@@ -382,11 +384,9 @@ fn render_table(frame: &mut ratatui::Frame, area: Rect, app: &App) {
     }
     let header = Row::new(vec![Line::from(header_cells)]);
 
-    let mut rows = vec![header];
-
-    for (i, test) in app.tests.iter().enumerate() {
+    let mut rows: Vec<Row> = Vec::with_capacity(app.tests.len());
+    for (_i, test) in app.tests.iter().enumerate() {
         let fastest = app.fastest(test).unwrap_or(f64::MAX);
-        let is_sel = i == app.selected;
 
         let mut cells = vec![Span::raw(test.clone())];
         for l in &app.langs {
@@ -416,12 +416,7 @@ fn render_table(frame: &mut ratatui::Frame, area: Rect, app: &App) {
             }
         }
 
-        let style = if is_sel {
-            Style::default().bg(Color::DarkGray)
-        } else {
-            Style::default()
-        };
-        rows.push(Row::new(vec![Line::from(cells)]).style(style));
+        rows.push(Row::new(vec![Line::from(cells)]));
     }
 
     // Column widths
@@ -434,6 +429,7 @@ fn render_table(frame: &mut ratatui::Frame, area: Rect, app: &App) {
     state.select(Some(app.selected));
 
     let table = Table::new(rows, widths)
+        .header(header)
         .block(Block::default().borders(Borders::ALL).title(" Benchmark Comparison ★ = fastest, Nx = N times slower "))
         .highlight_style(Style::default().bg(Color::DarkGray));
 
@@ -448,7 +444,7 @@ fn render_bars(frame: &mut ratatui::Frame, area: Rect, app: &App) {
     let test = &app.tests[app.selected];
     let fastest = app.fastest(test).unwrap_or(1.0);
 
-    let title = format!(" {} — relative to fastest ({}x scale) ", test, fmt_time(fastest));
+    let title = format!(" {} — fastest: {} ", test, fmt_time(fastest));
 
     let bar_data: Vec<(&str, u64)> = app.langs.iter()
         .filter_map(|l| {
