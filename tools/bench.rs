@@ -457,8 +457,11 @@ fn render_table(frame: &mut ratatui::Frame, area: Rect, app: &App) {
         return;
     }
 
-    // Header row: Benchmark | C | C++ | Rust | Java | Python
-    let mut header_cells = vec![Span::styled("Benchmark", Style::default().add_modifier(Modifier::BOLD))];
+    // Header row: Category | Sub-test | C | C++ | Rust | Java | Python
+    let mut header_cells = vec![
+        Span::styled("Category", Style::default().add_modifier(Modifier::BOLD)),
+        Span::styled("Sub-test", Style::default().add_modifier(Modifier::BOLD)),
+    ];
     for l in &app.langs {
         header_cells.push(Span::styled(
             format!(" {:>10}", l),
@@ -471,9 +474,11 @@ fn render_table(frame: &mut ratatui::Frame, area: Rect, app: &App) {
     for (_i, test) in app.tests.iter().enumerate() {
         let fastest = app.fastest(test).unwrap_or(f64::MAX);
 
-        // Show category as prefix for context
         let cat = app.test_cat.get(test).map(|s| s.as_str()).unwrap_or("?");
-        let mut cells = vec![Span::raw(format!("{:<8} {}", cat, test))];
+        let mut cells = vec![
+            Span::raw(cat.to_string()),
+            Span::raw(test.clone()),
+        ];
         for l in &app.langs {
             if let Some(st) = app.grid.get(test).and_then(|m| m.get(l)) {
                 let is_fastest = (st.avg_ms - fastest).abs() < fastest * 1e-9;
@@ -510,10 +515,10 @@ fn render_table(frame: &mut ratatui::Frame, area: Rect, app: &App) {
         rows.push(Row::new(vec![Line::from(cells)]));
     }
 
-    // Column widths
-    let mut widths = vec![Constraint::Length(20)];
+    // Column widths: Category + Sub-test + language columns
+    let mut widths = vec![Constraint::Length(14), Constraint::Length(20)];
     for _ in &app.langs {
-        widths.push(Constraint::Length(12));
+        widths.push(Constraint::Length(14));
     }
 
     let mut state = TableState::default();
@@ -755,6 +760,11 @@ fn run_tui() {
         // Check if background run finished
         if app.run_active && app.run_done.load(Ordering::Relaxed) >= app.run_total.load(Ordering::Relaxed) {
             app.run_active = false;
+            app.refresh();
+        }
+
+        // Auto-refresh while running — pick up partial results
+        if app.run_active {
             app.refresh();
         }
 
