@@ -135,6 +135,8 @@ struct App {
     db: Database,
     runs: Vec<BenchmarkRun>,
     stats: Vec<BenchmarkStats>,
+    categories: Vec<String>,
+    current_category_idx: usize,
     view: View,
     view_mode: ViewMode,
     selected_batch: usize,
@@ -155,37 +157,46 @@ impl App {
                 "c-hash".to_string(), "c-regex".to_string(), "c-json".to_string(),
                 "c-fileio".to_string(), "c-math".to_string(), "c-network".to_string(),
                 "c-crypto".to_string(), "c-ml".to_string(), "c-concurrency".to_string(),
+                "c-cpu".to_string(),
             ], enabled: true },
             TestBatch { name: "C++".to_string(), mise_tasks: vec![
                 "cpp-matrix".to_string(), "cpp-sort".to_string(), "cpp-string".to_string(),
                 "cpp-hash".to_string(), "cpp-regex".to_string(), "cpp-json".to_string(),
                 "cpp-fileio".to_string(), "cpp-math".to_string(), "cpp-network".to_string(),
                 "cpp-crypto".to_string(), "cpp-concurrency".to_string(),
+                "cpp-cpu".to_string(),
             ], enabled: true },
             TestBatch { name: "Rust".to_string(), mise_tasks: vec![
                 "rust-matrix".to_string(), "rust-sort".to_string(), "rust-string".to_string(),
                 "rust-hash".to_string(), "rust-regex".to_string(), "rust-json".to_string(),
                 "rust-fileio".to_string(), "rust-math".to_string(), "rust-network".to_string(),
                 "rust-crypto".to_string(), "rust-ml".to_string(), "rust-concurrency".to_string(),
+                "rust-cpu".to_string(),
             ], enabled: true },
             TestBatch { name: "Python".to_string(), mise_tasks: vec![
                 "python-matrix".to_string(), "python-sort".to_string(), "python-string".to_string(),
                 "python-hash".to_string(), "python-regex".to_string(), "python-json".to_string(),
                 "python-fileio".to_string(), "python-math".to_string(), "python-network".to_string(),
                 "python-crypto".to_string(), "python-ml".to_string(), "python-async".to_string(),
+                "python-cpu".to_string(),
             ], enabled: true },
             TestBatch { name: "Java".to_string(), mise_tasks: vec![
                 "java-matrix".to_string(), "java-sort".to_string(), "java-string".to_string(),
                 "java-hash".to_string(), "java-regex".to_string(), "java-json".to_string(),
                 "java-fileio".to_string(), "java-math".to_string(), "java-crypto".to_string(),
                 "java-concurrency".to_string(),
+                "java-cpu".to_string(),
             ], enabled: true },
         ];
         
+        let categories = db.get_categories().unwrap_or_default();
+
         Self {
             db,
             runs,
             stats,
+            categories,
+            current_category_idx: 0,
             view: View::Main,
             view_mode: ViewMode::Graph,
             selected_batch: 0,
@@ -196,7 +207,14 @@ impl App {
     
     fn refresh(&mut self) {
         self.runs = self.db.get_runs(50).unwrap_or_default();
-        self.stats = self.db.get_stats(None).unwrap_or_default();
+        self.categories = self.db.get_categories().unwrap_or_default();
+        self.stats = if self.categories.is_empty() || self.current_category_idx == 0 {
+            self.db.get_stats(None).unwrap_or_default()
+        } else if let Some(cat) = self.categories.get(self.current_category_idx) {
+            self.db.get_stats(Some(cat)).unwrap_or_default()
+        } else {
+            self.db.get_stats(None).unwrap_or_default()
+        };
     }
     
     fn run_selected(&mut self) {
@@ -239,6 +257,8 @@ impl App {
                     "crypto"
                 } else if task.contains("ml") {
                     "ml"
+                } else if task.contains("cpu") {
+                    "cpu"
                 } else if task.contains("concurrency") || task.contains("async") {
                     "concurrency"
                 } else {
@@ -656,8 +676,13 @@ fn render_table_view(frame: &mut ratatui::Frame, area: Rect, stats: &[BenchmarkS
     frame.render_stateful_widget(table, area, &mut table_state);
 }
 
-fn render_header(frame: &mut ratatui::Frame, area: Rect, runs: &[BenchmarkRun]) {
-    let completed = runs.iter().filter(|r| r.status == "completed").count();
+fn render_header(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+    let completed = app.runs.iter().filter(|r| r.status == "completed").count();
+    let cat_label = if app.categories.is_empty() || app.current_category_idx == 0 {
+        "All".to_string()
+    } else {
+        app.categories.get(app.current_category_idx).cloned().unwrap_or_default()
+    };
     let text = vec![Line::from(vec![
         Span::styled(" BENCHMARK SUITE ", Style::new().bg(Color::Blue).fg(Color::White)),
         Span::raw("  │  "),
@@ -665,6 +690,9 @@ fn render_header(frame: &mut ratatui::Frame, area: Rect, runs: &[BenchmarkRun]) 
         Span::raw(format!(" {}  ", completed)),
         Span::styled("iters:", Style::new().fg(Color::DarkGray)),
         Span::raw(format!(" {}  ", ITERATIONS)),
+        Span::raw(" │ "),
+        Span::styled("cat:", Style::new().fg(Color::DarkGray)),
+        Span::styled(cat_label, Style::new().fg(Color::Cyan)),
     ])];
     
     let paragraph = ratatui::widgets::Paragraph::new(text)
@@ -884,7 +912,7 @@ fn main() {
     loop {
         terminal.draw(|f| {
             let size = f.size();
-            render_header(f, Rect::new(0, 0, size.width, 3), &app.runs);
+            render_header(f, Rect::new(0, 0, size.width, 3), &app);
             render_view(f, Rect::new(0, 3, size.width, size.height - 3), &mut app);
         }).ok();
         
@@ -906,6 +934,14 @@ fn main() {
                         }
                         KeyCode::Char('s') => app.view = View::Select,
                         KeyCode::Char('R') => app.refresh(),
+                        KeyCode::Char('c') => {
+                            let count = app.categories.len();
+                            if count > 0 {
+                                app.current_category_idx = (app.current_category_idx + 1) % (count + 1);
+                                app.refresh();
+                                app.selected_row = 0;
+                            }
+                        }
                         KeyCode::Char('1') => app.view_mode = ViewMode::Graph,
                         KeyCode::Char('2') => app.view_mode = ViewMode::Table,
                         KeyCode::Char('3') => {

@@ -49,10 +49,9 @@ pub struct Database {
 impl Database {
     pub fn new(path: Option<PathBuf>) -> SqliteResult<Self> {
         let db_path = path.unwrap_or_else(|| {
-            let exe_path = std::env::current_exe()
-                .unwrap_or_else(|_| PathBuf::from("."));
-            let exe_dir = exe_path.parent().unwrap_or(std::path::Path::new("."));
-            exe_dir.join("benchmarks.db")
+            let base = dirs::data_dir()
+                .unwrap_or_else(|| PathBuf::from("."));
+            base.join("benchmarks").join("benchmarks.db")
         });
         
         if let Some(parent) = db_path.parent() {
