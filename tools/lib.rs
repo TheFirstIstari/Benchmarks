@@ -340,6 +340,13 @@ impl Database {
         
         Ok(results)
     }
+
+    /// Drop all data — wipe both tables and re-init
+    pub fn wipe(&self) -> SqliteResult<()> {
+        let conn = self.conn.lock().unwrap();
+        conn.execute_batch("DELETE FROM benchmark_results; DELETE FROM benchmark_runs;")?;
+        Ok(())
+    }
 }
 
 impl Default for Database {

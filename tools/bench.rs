@@ -19,6 +19,8 @@ use ratatui::Terminal;
 use std::collections::HashMap;
 use std::io::{self, Write};
 use std::process::Command;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Arc;
 
 #[derive(Parser)]
 #[command(name = "bench", about = "Benchmark comparison tool")]
@@ -329,6 +331,11 @@ struct App {
     /// None = overview, Some(cat) = sub-benchmark detail view
     detail_cat: Option<String>,
     detail_selected: usize,
+    // Background run progress
+    run_done: Arc<AtomicUsize>,
+    run_total: Arc<AtomicUsize>,
+    run_active: bool,
+    wipe_confirm: bool,
 }
 
 impl App {
@@ -347,6 +354,10 @@ impl App {
             show_bars: false,
             detail_cat: None,
             detail_selected: 0,
+            run_done: Arc::new(AtomicUsize::new(0)),
+            run_total: Arc::new(AtomicUsize::new(0)),
+            run_active: false,
+            wipe_confirm: false,
         };
         app.refresh();
         app
@@ -399,9 +410,41 @@ impl App {
         })
     }
 
-    /// Get sub-tests for a category (test_names belonging to that category)
+    /// Get sub-tests for a category
     fn sub_tests(&self, cat: &str) -> Vec<String> {
         self.cat_tests.get(cat).cloned().unwrap_or_default()
+    }
+
+    /// Spawn background benchmark run for given tasks
+    fn start_bg_run(&mut self, run_tasks: Vec<Task>) {
+        if self.run_active {
+            return;
+        }
+        let total = run_tasks.len();
+        self.run_done.store(0, Ordering::Relaxed);
+        self.run_total.store(total, Ordering::Relaxed);
+        self.run_active = true;
+
+        let done = self.run_done.clone();
+        std::thread::spawn(move || {
+            let db = Database::new(None).expect("DB");
+            let name = format!("bg-{}", Utc::now().format("%H%M%S"));
+            let run_id = db.start_run(&name, 1).expect("start run");
+            for t in &run_tasks {
+                let output = Command::new("mise").arg(t.mise).output();
+                if let Ok(out) = output {
+                    let stdout = String::from_utf8_lossy(&out.stdout);
+                    let stderr = String::from_utf8_lossy(&out.stderr);
+                    let combined = format!("{}\n{}", stdout, stderr);
+                    for r in parse_output(&combined, t.lang, t.cat) {
+                        db.insert_result(run_id, &r).ok();
+                    }
+                }
+                done.fetch_add(1, Ordering::Relaxed);
+            }
+            db.update_result_count(run_id).ok();
+            db.complete_run(run_id, "completed").ok();
+        });
     }
 }
 
@@ -635,19 +678,34 @@ fn render_detail(frame: &mut ratatui::Frame, area: Rect, app: &App) {
 }
 
 fn render_footer(frame: &mut ratatui::Frame, area: Rect, app: &App) {
-    let line = Line::from(vec![
+    let mut spans = vec![
         Span::styled("[j/k]", Style::default().fg(Color::Cyan)),
         Span::raw(" navigate  "),
         Span::styled("[Tab]", Style::default().fg(Color::Cyan)),
         Span::raw(" table/bars  "),
         Span::styled("[r]", Style::default().fg(Color::Cyan)),
-        Span::raw(" run  "),
+        Span::raw(" run all  "),
+        Span::styled("[s]", Style::default().fg(Color::Cyan)),
+        Span::raw(" run cat  "),
+        Span::styled("[d]", Style::default().fg(Color::Cyan)),
+        Span::raw(" wipe  "),
         Span::styled("[R]", Style::default().fg(Color::Cyan)),
         Span::raw(" refresh  "),
         Span::styled("[q]", Style::default().fg(Color::Cyan)),
         Span::raw(" quit  "),
-        Span::raw(format!("│ {} benchmarks, {} languages", app.tests.len(), app.langs.len())),
-    ]);
+    ];
+
+    if app.wipe_confirm {
+        spans.push(Span::styled("│ Press d again to WIPE!", Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)));
+    } else if app.run_active {
+        let done = app.run_done.load(Ordering::Relaxed);
+        let total = app.run_total.load(Ordering::Relaxed);
+        spans.push(Span::styled(format!("│ Running {}/{}...", done, total), Style::default().fg(Color::Yellow)));
+    } else {
+        spans.push(Span::raw(format!("│ {} benchmarks, {} languages", app.tests.len(), app.langs.len())));
+    }
+
+    let line = Line::from(spans);
     let p = Paragraph::new(vec![line])
         .style(Style::default().bg(Color::Black))
         .block(Block::default().borders(Borders::TOP));
@@ -694,6 +752,17 @@ fn run_tui() {
             render_footer(f, chunks[2], &app);
         }).ok();
 
+        // Check if background run finished
+        if app.run_active && app.run_done.load(Ordering::Relaxed) >= app.run_total.load(Ordering::Relaxed) {
+            app.run_active = false;
+            app.refresh();
+        }
+
+        // Non-blocking poll: redraw every 200ms for live progress
+        if !event::poll(std::time::Duration::from_millis(200)).unwrap_or(false) {
+            continue;
+        }
+
         if let Ok(Event::Key(key)) = event::read() {
             if key.kind != KeyEventKind::Press {
                 continue;
@@ -718,7 +787,6 @@ fn run_tui() {
                     app.show_bars = !app.show_bars;
                 }
                 KeyCode::Enter => {
-                    // Toggle detail view for selected benchmark's category
                     if app.detail_cat.is_some() {
                         app.detail_cat = None;
                     } else if let Some(test) = app.tests.get(app.selected) {
@@ -738,18 +806,35 @@ fn run_tui() {
                     app.refresh();
                 }
                 KeyCode::Char('r') => {
-                    // Drop to shell, run benchmarks, come back
-                    execute!(io::stdout(), LeaveAlternateScreen).ok();
-                    crossterm::terminal::disable_raw_mode().ok();
-                    run_benchmarks(None, 3);
-                    println!("\nPress Enter to return...");
-                    let mut buf = String::new();
-                    std::io::stdin().read_line(&mut buf).ok();
-                    crossterm::terminal::enable_raw_mode().ok();
-                    execute!(io::stdout(), EnterAlternateScreen).ok();
-                    app.refresh();
+                    // Background run all benchmarks
+                    app.start_bg_run(tasks());
+                }
+                KeyCode::Char('s') => {
+                    // Background run selected category only
+                    if let Some(test) = app.tests.get(app.selected) {
+                        if let Some(cat) = app.test_cat.get(test) {
+                            let cat_tasks: Vec<Task> = tasks().into_iter()
+                                .filter(|t| t.cat == cat.as_str())
+                                .collect();
+                            app.start_bg_run(cat_tasks);
+                        }
+                    }
+                }
+                KeyCode::Char('d') => {
+                    // Wipe DB — double press to confirm
+                    if app.wipe_confirm {
+                        app.db.wipe().ok();
+                        app.wipe_confirm = false;
+                        app.refresh();
+                    } else {
+                        app.wipe_confirm = true;
+                    }
                 }
                 _ => {}
+            }
+            // Reset wipe confirmation after any other key
+            if key.code != KeyCode::Char('d') {
+                app.wipe_confirm = false;
             }
         }
     }
