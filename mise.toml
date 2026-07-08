@@ -2,6 +2,7 @@
 python = "3.13.2"
 rust = "stable"
 dotnet = "9.0.203"
+java = "openjdk-21"
 
 [settings]
 python.uv_venv_auto = true
@@ -533,7 +534,19 @@ run = "cargo build --release --manifest-path tools/Cargo.toml"
 
 [tasks.monitor]
 depends = ["tools-build"]
-run = "tools/target/release/monitor"
+run = "tools/target/release/bench"
+
+[tasks.bench]
+depends = ["tools-build"]
+run = "tools/target/release/bench"
+
+[tasks.bench-run]
+depends = ["tools-build", "compile-all"]
+run = "tools/target/release/bench run"
+
+[tasks.bench-show]
+depends = ["tools-build"]
+run = "tools/target/release/bench show"
 
 [tasks.store]
 run = "tools/target/release/store list"

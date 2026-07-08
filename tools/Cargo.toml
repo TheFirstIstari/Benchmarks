@@ -34,3 +34,7 @@ path = "store.rs"
 [[bin]]
 name = "runner"
 path = "runner.rs"
+
+[[bin]]
+name = "bench"
+path = "bench.rs"
