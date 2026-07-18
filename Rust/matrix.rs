@@ -1,6 +1,8 @@
 use rand::Rng;
+use std::hint::black_box;
 
 fn matmul(C: &mut [f64], A: &[f64], B: &[f64], n: usize) {
+    // ikj loop order for cache efficiency - compiler will auto-vectorize
     for i in 0..n {
         for k in 0..n {
             let aik = A[i * n + k];
@@ -38,7 +40,7 @@ fn main() {
     let mut T: Vec<f64> = vec![0.0; N * N];
     
     let mut total_ns: u64 = 0;
-    let mut sum: f64 = 0.0;
+    let mut _sum: f64 = 0.0;
     
     for _ in 0..ITERATIONS {
         C.fill(0.0);
@@ -46,7 +48,7 @@ fn main() {
         matmul(&mut C, &A, &B, N);
         let t1 = std::time::Instant::now();
         total_ns += t1.duration_since(t0).as_nanos() as u64;
-        sum += C.iter().sum::<f64>();
+        _sum += C.iter().sum::<f64>();
     }
     
     let avg_ms = (total_ns / ITERATIONS as u64) as f64 / 1e6;
@@ -59,7 +61,7 @@ fn main() {
     for _ in 0..ITERATIONS {
         transpose(&mut T, &A, N);
         let sum = T.iter().sum::<f64>();
-        std::hint::black_box(sum);
+        black_box(sum);
     }
     let t1 = std::time::Instant::now();
     let avg_ms = (t1.duration_since(t0).as_nanos() as f64 / ITERATIONS as f64) / 1e6;

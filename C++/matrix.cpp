@@ -11,6 +11,7 @@ constexpr int N = 2000;
 constexpr int ITERATIONS = 5;
 
 void matmul(vector<double>& C, const vector<double>& A, const vector<double>& B, int n) {
+    // Simple ikj order with compiler vectorization
     for (int i = 0; i < n; i++) {
         for (int k = 0; k < n; k++) {
             double aik = A[i * n + k];

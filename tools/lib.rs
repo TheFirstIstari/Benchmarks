@@ -1,3 +1,8 @@
+#![allow(dead_code)]
+
+pub mod tasks;
+pub mod parser;
+
 use chrono::{DateTime, Utc};
 use rusqlite::{Connection, Result as SqliteResult};
 use serde::{Deserialize, Serialize};
@@ -279,7 +284,7 @@ impl Database {
         let conn = self.conn.lock().unwrap();
         let mut stmt = conn.prepare(
             "SELECT r.id, r.language, r.category, r.test_name, r.time_ms, r.metric, r.value, 
-                    r.metadata, r.timestamp, r.hostname
+                      r.metadata, r.timestamp, r.hostname
              FROM benchmark_results r
              WHERE r.run_id = (
                  SELECT id FROM benchmark_runs 
@@ -308,6 +313,64 @@ impl Database {
         })?.collect::<SqliteResult<Vec<_>>>()?;
         
         Ok(results)
+    }
+    
+    pub fn get_results_for_run(&self, run_id: i64) -> SqliteResult<Vec<BenchmarkResult>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT id, language, category, test_name, time_ms, metric, value, 
+                    metadata, timestamp, hostname
+             FROM benchmark_results
+             WHERE run_id = ?1
+             ORDER BY category, language, test_name"
+        )?;
+        
+        let results = stmt.query_map([run_id], |row| {
+            Ok(BenchmarkResult {
+                id: Some(row.get(0)?),
+                language: row.get(1)?,
+                category: row.get(2)?,
+                test_name: row.get(3)?,
+                time_ms: row.get(4)?,
+                metric: row.get(5)?,
+                value: row.get(6)?,
+                metadata: row.get(7)?,
+                timestamp: chrono::DateTime::parse_from_rfc3339(&row.get::<_, String>(8)?)
+                    .unwrap_or_default()
+                    .with_timezone(&Utc),
+                hostname: row.get(9)?,
+            })
+        })?.collect::<SqliteResult<Vec<_>>>()?;
+        
+        Ok(results)
+    }
+    
+    pub fn get_languages(&self) -> SqliteResult<Vec<String>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT DISTINCT language FROM benchmark_results ORDER BY language"
+        )?;
+        
+        let languages = stmt.query_map([], |row| row.get(0))?
+            .collect::<SqliteResult<Vec<String>>>()?;
+        
+        Ok(languages)
+    }
+    
+    pub fn get_latest_run_id(&self) -> SqliteResult<Option<i64>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT id FROM benchmark_runs 
+             WHERE status IN ('completed', 'partial') 
+             ORDER BY started_at DESC LIMIT 1"
+        )?;
+        
+        // Try to get a result - returns None if no rows
+        match stmt.query_row([], |row| row.get(0)) {
+            Ok(id) => Ok(Some(id)),
+            Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
+            Err(e) => Err(e),
+        }
     }
     
     pub fn get_benchmark_results(&self, test_name: &str, language: &str) -> SqliteResult<Vec<BenchmarkResult>> {

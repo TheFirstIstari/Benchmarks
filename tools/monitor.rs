@@ -187,6 +187,42 @@ impl App {
                 "java-concurrency".to_string(),
                 "java-cpu".to_string(),
             ], enabled: true },
+            TestBatch { name: "Go".to_string(), mise_tasks: vec![
+                "go-matrix".to_string(), "go-sort".to_string(), "go-string".to_string(),
+                "go-hash".to_string(), "go-regex".to_string(), "go-json".to_string(),
+                "go-fileio".to_string(), "go-math".to_string(), "go-network".to_string(),
+                "go-crypto".to_string(), "go-ml".to_string(), "go-concurrency".to_string(),
+                "go-cpu".to_string(), "go-allocator".to_string(),
+            ], enabled: true },
+            TestBatch { name: "Ruby".to_string(), mise_tasks: vec![
+                "ruby-matrix".to_string(), "ruby-sort".to_string(), "ruby-string".to_string(),
+                "ruby-hash".to_string(), "ruby-regex".to_string(), "ruby-json".to_string(),
+                "ruby-fileio".to_string(), "ruby-math".to_string(), "ruby-network".to_string(),
+                "ruby-crypto".to_string(), "ruby-ml".to_string(), "ruby-concurrency".to_string(),
+                "ruby-cpu".to_string(), "ruby-allocator".to_string(),
+            ], enabled: true },
+            TestBatch { name: "C#".to_string(), mise_tasks: vec![
+                "cs-matrix".to_string(), "cs-sort".to_string(), "cs-string".to_string(),
+                "cs-hash".to_string(), "cs-regex".to_string(), "cs-json".to_string(),
+                "cs-fileio".to_string(), "cs-math".to_string(), "cs-network".to_string(),
+                "cs-crypto".to_string(), "cs-ml".to_string(), "cs-concurrency".to_string(),
+                "cs-cpu".to_string(), "cs-allocator".to_string(),
+            ], enabled: true },
+            TestBatch { name: "Node.js".to_string(), mise_tasks: vec![
+                "node-run".to_string(),
+            ], enabled: true },
+            TestBatch { name: "PHP".to_string(), mise_tasks: vec![
+                "php-run".to_string(),
+            ], enabled: true },
+            TestBatch { name: "Zig".to_string(), mise_tasks: vec![
+                "zig-run".to_string(),
+            ], enabled: true },
+            TestBatch { name: "Swift".to_string(), mise_tasks: vec![
+                "swift-run".to_string(),
+            ], enabled: true },
+            TestBatch { name: "Kotlin".to_string(), mise_tasks: vec![
+                "kotlin-run".to_string(),
+            ], enabled: true },
         ];
         
         let categories = db.get_categories().unwrap_or_default();
@@ -340,8 +376,22 @@ fn get_lang_color(lang: &str) -> Color {
         Color::Magenta
     } else if lang_lower.contains("python") {
         Color::Blue
-    } else if lang_lower.contains("c#") {
+    } else if lang_lower.contains("c#") || lang_lower.contains("dotnet") {
         Color::Rgb(200, 100, 255)
+    } else if lang_lower.contains("go") {
+        Color::Rgb(0, 150, 0)  // Go green
+    } else if lang_lower.contains("ruby") {
+        Color::Red
+    } else if lang_lower.contains("node.js") || lang_lower.contains("node") || lang_lower.contains("javascript") {
+        Color::Rgb(0, 150, 255)  // Node.js green-blue
+    } else if lang_lower.contains("php") {
+        Color::Rgb(80, 40, 200)  // PHP purple
+    } else if lang_lower.contains("zig") {
+        Color::Rgb(255, 100, 0)  // Zig orange
+    } else if lang_lower.contains("swift") {
+        Color::Rgb(40, 120, 255)  // Swift blue
+    } else if lang_lower.contains("kotlin") {
+        Color::Rgb(120, 0, 200)  // Kotlin purple
     } else {
         Color::White
     }

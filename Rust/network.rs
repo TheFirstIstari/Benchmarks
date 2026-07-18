@@ -1,4 +1,3 @@
-use std::io::{Read, Write};
 use std::time::Instant;
 
 const ITERATIONS: usize = 100;

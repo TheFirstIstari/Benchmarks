@@ -130,7 +130,7 @@ fn bench_simd() {
     }
     let ms = fmt_ms(t0.elapsed());
     let mut total = 0.0f32;
-    for i in (0..1000) { total += c[i * 1000]; }
+    for i in 0..1000 { total += c[i * 1000]; }
     println!("cpu_simd_neon: {:.2} ms ({:.0} ops/sec)", ms, (SIMD_N as f64 / 4.0) / (ms / 1000.0));
     std::hint::black_box(total);
 }

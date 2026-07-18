@@ -7,7 +7,7 @@ fn main() {
     println!("Rust Crypto Benchmark");
     
     let mut key = [0u8; 16];
-    let mut input = [0xAAu8; 16];
+    let input = [0xAAu8; 16];
     let mut output = [0u8; 16];
     
     for (i, k) in key.iter_mut().enumerate() {

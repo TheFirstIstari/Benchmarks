@@ -6,10 +6,10 @@ java = "openjdk-21"
 go = "latest"
 
 [settings]
-python.uv_venv_auto = true
+python.uv_venv_auto = "create|source"
 
 [task_config]
-dir = "/Users/frobinson/Documents/ObsidianVault/Programming/SideProjects/Benchmarks"
+dir = "/Users/frobinson/dev/Benchmarks"
 
 [tasks.install]
 run = "mise install"
@@ -25,7 +25,7 @@ depends = ["compile-all"]
 # ============================================================================
 
 [tasks.compile-all]
-depends = ["c-compile", "cpp-compile", "java-compile", "rust-compile"]
+depends = ["c-compile", "cpp-compile", "java-compile", "rust-compile", "go-compile", "cs-compile"]
 
 # ============================================================================
 # Run All Benchmarks
@@ -35,150 +35,160 @@ depends = ["c-compile", "cpp-compile", "java-compile", "rust-compile"]
 depends = ["compile-all", "run-all-benchmarks"]
 
 [tasks.run-all-benchmarks]
-depends = ["c-run", "cpp-run", "python-all", "java-run", "rust-run"]
+depends = ["c-run", "cpp-run", "python-all", "java-run", "rust-run", "go-run", "ruby-run", "cs-run"]
 
 # ============================================================================
 # Category: Matrix
 # ============================================================================
 
 [tasks.matrix-all]
-depends = ["c-matrix", "cpp-matrix", "python-matrix", "java-matrix", "rust-matrix"]
+depends = ["c-matrix", "cpp-matrix", "python-matrix", "java-matrix", "rust-matrix", "go-matrix", "ruby-matrix", "cs-matrix"]
 
 [tasks.matrix-compile]
 depends = ["c-matrix-compile", "cpp-matrix-compile", "java-matrix", "rust-matrix"]
 
 [tasks.matrix-run]
-depends = ["c-matrix", "cpp-matrix", "python-matrix", "java-matrix", "rust-matrix"]
+depends = ["c-matrix", "cpp-matrix", "python-matrix", "java-matrix", "rust-matrix", "go-matrix", "ruby-matrix", "cs-matrix"]
 
 # ============================================================================
 # Category: Sort
 # ============================================================================
 
 [tasks.sort-all]
-depends = ["c-sort", "cpp-sort", "python-sort", "java-sort", "rust-sort"]
+depends = ["c-sort", "cpp-sort", "python-sort", "java-sort", "rust-sort", "go-sort", "ruby-sort", "cs-sort"]
 
 [tasks.sort-compile]
 depends = ["c-sort-compile", "cpp-sort-compile", "java-sort", "rust-sort"]
 
 [tasks.sort-run]
-depends = ["c-sort", "cpp-sort", "python-sort", "java-sort", "rust-sort"]
+depends = ["c-sort", "cpp-sort", "python-sort", "java-sort", "rust-sort", "go-sort", "ruby-sort", "cs-sort"]
 
 # ============================================================================
 # Category: String
 # ============================================================================
 
 [tasks.string-all]
-depends = ["c-string", "cpp-string", "python-string", "java-string", "rust-string"]
+depends = ["c-string", "cpp-string", "python-string", "java-string", "rust-string", "go-string", "ruby-string", "cs-string"]
 
 [tasks.string-compile]
 depends = ["c-string-compile", "cpp-string-compile", "java-string", "rust-string"]
 
 [tasks.string-run]
-depends = ["c-string", "cpp-string", "python-string", "java-string", "rust-string"]
+depends = ["c-string", "cpp-string", "python-string", "java-string", "rust-string", "go-string", "ruby-string", "cs-string"]
 
 # ============================================================================
 # Category: Hash
 # ============================================================================
 
 [tasks.hash-all]
-depends = ["c-hash", "cpp-hash", "python-hash", "java-hash", "rust-hash"]
+depends = ["c-hash", "cpp-hash", "python-hash", "java-hash", "rust-hash", "go-hash", "ruby-hash", "cs-hash"]
 
 [tasks.hash-compile]
 depends = ["c-hash-compile", "cpp-hash-compile", "java-hash", "rust-hash"]
 
 [tasks.hash-run]
-depends = ["c-hash", "cpp-hash", "python-hash", "java-hash", "rust-hash"]
+depends = ["c-hash", "cpp-hash", "python-hash", "java-hash", "rust-hash", "go-hash", "ruby-hash", "cs-hash"]
 
 # ============================================================================
 # Category: Regex
 # ============================================================================
 
 [tasks.regex-all]
-depends = ["c-regex", "cpp-regex", "python-regex", "java-regex", "rust-regex"]
+depends = ["c-regex", "cpp-regex", "python-regex", "java-regex", "rust-regex", "go-regex", "ruby-regex", "cs-regex"]
 
 [tasks.regex-compile]
 depends = ["c-regex-compile", "cpp-regex-compile", "java-regex", "rust-regex"]
 
 [tasks.regex-run]
-depends = ["c-regex", "cpp-regex", "python-regex", "java-regex", "rust-regex"]
+depends = ["c-regex", "cpp-regex", "python-regex", "java-regex", "rust-regex", "go-regex", "ruby-regex", "cs-regex"]
 
 # ============================================================================
 # Category: JSON
 # ============================================================================
 
 [tasks.json-all]
-depends = ["c-json", "cpp-json", "python-json", "java-json", "rust-json"]
+depends = ["c-json", "cpp-json", "python-json", "java-json", "rust-json", "go-json", "ruby-json", "cs-json"]
 
 [tasks.json-compile]
 depends = ["c-json-compile", "cpp-json-compile", "java-json", "rust-json"]
 
 [tasks.json-run]
-depends = ["c-json", "cpp-json", "python-json", "java-json", "rust-json"]
+depends = ["c-json", "cpp-json", "python-json", "java-json", "rust-json", "go-json", "ruby-json", "cs-json"]
 
 # ============================================================================
 # Category: File I/O
 # ============================================================================
 
 [tasks.fileio-all]
-depends = ["c-fileio", "cpp-fileio", "python-fileio", "java-fileio", "rust-fileio"]
+depends = ["c-fileio", "cpp-fileio", "python-fileio", "java-fileio", "rust-fileio", "go-fileio", "ruby-fileio", "cs-fileio"]
 
 [tasks.fileio-compile]
 depends = ["c-fileio-compile", "cpp-fileio-compile", "java-fileio", "rust-fileio"]
 
 [tasks.fileio-run]
-depends = ["c-fileio", "cpp-fileio", "python-fileio", "java-fileio", "rust-fileio"]
+depends = ["c-fileio", "cpp-fileio", "python-fileio", "java-fileio", "rust-fileio", "go-fileio", "ruby-fileio", "cs-fileio"]
 
 # ============================================================================
 # Category: Math
 # ============================================================================
 
 [tasks.math-all]
-depends = ["c-math", "cpp-math", "python-math", "java-math", "rust-math"]
+depends = ["c-math", "cpp-math", "python-math", "java-math", "rust-math", "go-math", "ruby-math", "cs-math"]
 
 [tasks.math-compile]
 depends = ["c-math-compile", "cpp-math-compile", "java-math", "rust-math"]
 
 [tasks.math-run]
-depends = ["c-math", "cpp-math", "python-math", "java-math", "rust-math"]
+depends = ["c-math", "cpp-math", "python-math", "java-math", "rust-math", "go-math", "ruby-math", "cs-math"]
 
 # ============================================================================
 # Category: Network
 # ============================================================================
 
 [tasks.network-all]
-depends = ["c-network", "cpp-network", "python-network"]
+depends = ["c-network", "cpp-network", "python-network", "go-network", "ruby-network", "cs-network", "java-network", "rust-network"]
 
 [tasks.network-compile]
 depends = ["c-network-compile", "cpp-network-compile"]
 
 [tasks.network-run]
-depends = ["c-network", "cpp-network", "python-network"]
+depends = ["c-network", "cpp-network", "python-network", "go-network", "ruby-network", "cs-network", "java-network", "rust-network"]
 
 # ============================================================================
 # Category: Crypto
 # ============================================================================
 
 [tasks.crypto-all]
-depends = ["c-crypto", "cpp-crypto", "python-crypto", "java-crypto", "rust-crypto"]
+depends = ["c-crypto", "cpp-crypto", "python-crypto", "java-crypto", "rust-crypto", "go-crypto", "ruby-crypto", "cs-crypto"]
 
 [tasks.crypto-compile]
 depends = ["c-crypto-compile", "cpp-crypto-compile", "java-crypto", "rust-crypto"]
 
 [tasks.crypto-run]
-depends = ["c-crypto", "cpp-crypto", "python-crypto", "java-crypto", "rust-crypto"]
+depends = ["c-crypto", "cpp-crypto", "python-crypto", "java-crypto", "rust-crypto", "go-crypto", "ruby-crypto", "cs-crypto"]
 
 # ============================================================================
 # Category: ML
 # ============================================================================
 
 [tasks.ml-all]
-depends = ["c-ml", "python-ml", "rust-ml"]
+depends = ["c-ml", "python-ml", "rust-ml", "cpp-ml", "java-ml", "go-ml", "ruby-ml", "cs-ml"]
 
 [tasks.ml-compile]
 depends = ["c-ml-compile", "rust-ml"]
 
 [tasks.ml-run]
-depends = ["c-ml", "python-ml", "rust-ml"]
+depends = ["c-ml", "python-ml", "rust-ml", "cpp-ml", "java-ml", "go-ml", "ruby-ml", "cs-ml"]
+
+# ============================================================================
+# Category: Concurrency
+# ============================================================================
+
+[tasks.concurrency-all]
+depends = ["c-concurrency", "cpp-concurrency", "python-async", "java-concurrency", "rust-concurrency", "go-concurrency", "ruby-concurrency", "cs-concurrency"]
+
+[tasks.concurrency-run]
+depends = ["c-concurrency", "cpp-concurrency", "python-async", "java-concurrency", "rust-concurrency", "go-concurrency", "ruby-concurrency", "cs-concurrency"]
 
 # ============================================================================
 # C Benchmarks
@@ -279,10 +289,10 @@ run = "./benchmarks/c_cpu"
 # ============================================================================
 
 [tasks.cpp-run]
-depends = ["cpp-matrix", "cpp-allocator", "cpp-string", "cpp-sort", "cpp-concurrency", "cpp-hash", "cpp-regex", "cpp-network", "cpp-crypto", "cpp-cpu"]
+depends = ["cpp-matrix", "cpp-allocator", "cpp-string", "cpp-sort", "cpp-concurrency", "cpp-hash", "cpp-regex", "cpp-network", "cpp-crypto", "cpp-cpu", "cpp-ml"]
 
 [tasks.cpp-compile]
-depends = ["cpp-matrix-compile", "cpp-allocator-compile", "cpp-string-compile", "cpp-sort-compile", "cpp-concurrency-compile", "cpp-hash-compile", "cpp-regex-compile", "cpp-network-compile", "cpp-crypto-compile", "cpp-cpu-compile"]
+depends = ["cpp-matrix-compile", "cpp-allocator-compile", "cpp-string-compile", "cpp-sort-compile", "cpp-concurrency-compile", "cpp-hash-compile", "cpp-regex-compile", "cpp-network-compile", "cpp-crypto-compile", "cpp-cpu-compile", "cpp-ml-compile"]
 
 [tasks.cpp-matrix-compile]
 run = "clang++ C++/matrix.cpp -O3 -ffast-math -march=native -o benchmarks/cpp_matrix -lm"
@@ -362,12 +372,18 @@ run = "clang++ C++/cpu.cpp -O3 -march=native -ffast-math -o benchmarks/cpp_cpu -
 [tasks.cpp-cpu]
 run = "./benchmarks/cpp_cpu"
 
+[tasks.cpp-ml-compile]
+run = "clang++ C++/ml.cpp -O3 -ffast-math -march=native -o benchmarks/cpp_ml -lm"
+
+[tasks.cpp-ml]
+run = "./benchmarks/cpp_ml"
+
 # ============================================================================
 # Python Benchmarks
 # ============================================================================
 
 [tasks.python-all]
-depends = ["python-matrix", "python-string", "python-sort", "python-async", "python-hash", "python-regex", "python-json", "python-json-multi", "python-fileio", "python-math", "python-network", "python-crypto", "python-ml", "python-cpu"]
+depends = ["python-matrix", "python-string", "python-sort", "python-async", "python-hash", "python-regex", "python-json", "python-json-multi", "python-fileio", "python-math", "python-network", "python-crypto", "python-ml", "python-cpu", "python-allocator"]
 
 [tasks.python-matrix]
 run = "python Python/matrix.py"
@@ -408,6 +424,9 @@ run = "python Python/ml.py"
 [tasks.python-cpu]
 run = "python Python/cpu.py"
 
+[tasks.python-allocator]
+run = "python Python/allocator.py"
+
 [tasks.python-json-multi]
 run = "python Python/json_multi.py"
 
@@ -416,10 +435,10 @@ run = "python Python/json_multi.py"
 # ============================================================================
 
 [tasks.java-run]
-depends = ["java-matrix", "java-string", "java-sort", "java-concurrency", "java-hash", "java-regex", "java-json", "java-fileio", "java-math", "java-crypto", "java-cpu"]
+depends = ["java-matrix", "java-string", "java-sort", "java-concurrency", "java-hash", "java-regex", "java-json", "java-fileio", "java-math", "java-crypto", "java-cpu", "java-ml", "java-allocator"]
 
 [tasks.java-compile]
-run = ["mkdir -p benchmarks/java", "javac -d benchmarks/java Java/MatrixBench.java Java/StringBench.java Java/SortBench.java Java/ConcurrencyBench.java Java/HashBench.java Java/RegexBench.java Java/JsonBench.java Java/FileIOBench.java Java/MathBench.java Java/CpuBench.java Java/CryptoBench.java Java/NetworkBench.java"]
+run = ["mkdir -p benchmarks/java", "javac -d benchmarks/java Java/MatrixBench.java Java/StringBench.java Java/SortBench.java Java/ConcurrencyBench.java Java/HashBench.java Java/RegexBench.java Java/JsonBench.java Java/FileIOBench.java Java/MathBench.java Java/CpuBench.java Java/CryptoBench.java Java/NetworkBench.java Java/MlBench.java Java/AllocatorBench.java"]
 
 [tasks.java-matrix]
 run = "java -cp benchmarks/java MatrixBench"
@@ -451,8 +470,17 @@ run = "java -cp benchmarks/java MathBench"
 [tasks.java-crypto]
 run = "java -cp benchmarks/java CryptoBench"
 
+[tasks.java-network]
+run = "java -cp benchmarks/java NetworkBench"
+
 [tasks.java-cpu]
 run = "java -cp benchmarks/java CpuBench"
+
+[tasks.java-ml]
+run = "java -cp benchmarks/java MlBench"
+
+[tasks.java-allocator]
+run = "java -cp benchmarks/java AllocatorBench"
 
 # ============================================================================
 # Rust Benchmarks
@@ -518,13 +546,23 @@ run = "echo 'Carbon benchmarks TBD - needs carbon compiler'"
 # ============================================================================
 
 [tasks.cpu-all]
-depends = ["c-cpu", "cpp-cpu", "java-cpu", "rust-cpu", "python-cpu"]
+depends = ["c-cpu", "cpp-cpu", "java-cpu", "rust-cpu", "python-cpu", "go-cpu", "ruby-cpu", "cs-cpu"]
 
 [tasks.cpu-compile]
 depends = ["c-cpu-compile", "cpp-cpu-compile", "java-cpu", "rust-cpu"]
 
 [tasks.cpu-run]
-depends = ["c-cpu", "cpp-cpu", "java-cpu", "rust-cpu", "python-cpu"]
+depends = ["c-cpu", "cpp-cpu", "java-cpu", "rust-cpu", "python-cpu", "go-cpu", "ruby-cpu", "cs-cpu"]
+
+# ============================================================================
+# Category: Allocator
+# ============================================================================
+
+[tasks.allocator-all]
+depends = ["c-allocator", "cpp-allocator", "rust-allocator", "python-allocator", "java-allocator", "go-allocator", "ruby-allocator", "cs-allocator"]
+
+[tasks.allocator-run]
+depends = ["c-allocator", "cpp-allocator", "rust-allocator", "python-allocator", "java-allocator", "go-allocator", "ruby-allocator", "cs-allocator"]
 
 # ============================================================================
 # Tools
@@ -567,6 +605,10 @@ run = "tools/target/release/runner --categories matrix"
 depends = ["tools-build", "rust-compile"]
 run = "tools/target/release/runner --categories sort"
 
+[tasks.dashboard]
+depends = ["tools-build"]
+run = "tools/target/release/dashboard"
+
 # ============================================================================
 # Utility
 # ============================================================================
@@ -580,3 +622,206 @@ run = "rm -rf ~/.local/share/benchmarks"
 
 [tasks.benchmarks]
 run = "mkdir -p benchmarks"
+
+# ============================================================================
+# Go Benchmarks
+# ============================================================================
+
+[tasks.go-compile]
+run = ["cd Go && go build -o ../benchmarks/go_matrix ./matrix", "cd Go && go build -o ../benchmarks/go_sort ./sort", "cd Go && go build -o ../benchmarks/go_string ./string", "cd Go && go build -o ../benchmarks/go_hash ./hash", "cd Go && go build -o ../benchmarks/go_regex ./regex", "cd Go && go build -o ../benchmarks/go_json ./json", "cd Go && go build -o ../benchmarks/go_fileio ./fileio", "cd Go && go build -o ../benchmarks/go_math ./math", "cd Go && go build -o ../benchmarks/go_network ./network", "cd Go && go build -o ../benchmarks/go_crypto ./crypto", "cd Go && go build -o ../benchmarks/go_ml ./ml", "cd Go && go build -o ../benchmarks/go_concurrency ./concurrency", "cd Go && go build -o ../benchmarks/go_cpu ./cpu", "cd Go && go build -o ../benchmarks/go_allocator ./allocator"]
+
+[tasks.go-run]
+depends = ["go-matrix", "go-sort", "go-string", "go-hash", "go-regex", "go-json", "go-fileio", "go-math", "go-network", "go-crypto", "go-ml", "go-concurrency", "go-cpu", "go-allocator"]
+
+[tasks.go-matrix]
+run = "cd Go && go run ./matrix"
+
+[tasks.go-sort]
+run = "cd Go && go run ./sort"
+
+[tasks.go-string]
+run = "cd Go && go run ./string"
+
+[tasks.go-hash]
+run = "cd Go && go run ./hash"
+
+[tasks.go-regex]
+run = "cd Go && go run ./regex"
+
+[tasks.go-json]
+run = "cd Go && go run ./json"
+
+[tasks.go-fileio]
+run = "cd Go && go run ./fileio"
+
+[tasks.go-math]
+run = "cd Go && go run ./math"
+
+[tasks.go-network]
+run = "cd Go && go run ./network"
+
+[tasks.go-crypto]
+run = "cd Go && go run ./crypto"
+
+[tasks.go-ml]
+run = "cd Go && go run ./ml"
+
+[tasks.go-concurrency]
+run = "cd Go && go run ./concurrency"
+
+[tasks.go-cpu]
+run = "cd Go && go run ./cpu"
+
+[tasks.go-allocator]
+run = "cd Go && go run ./allocator"
+
+# ============================================================================
+# Ruby Benchmarks
+# ============================================================================
+
+[tasks.ruby-run]
+depends = ["ruby-matrix", "ruby-sort", "ruby-string", "ruby-hash", "ruby-regex", "ruby-json", "ruby-fileio", "ruby-math", "ruby-network", "ruby-crypto", "ruby-ml", "ruby-concurrency", "ruby-cpu", "ruby-allocator"]
+
+[tasks.ruby-matrix]
+run = "ruby Ruby/matrix.rb"
+
+[tasks.ruby-sort]
+run = "ruby Ruby/sort.rb"
+
+[tasks.ruby-string]
+run = "ruby Ruby/string.rb"
+
+[tasks.ruby-hash]
+run = "ruby Ruby/hash.rb"
+
+[tasks.ruby-regex]
+run = "ruby Ruby/regex.rb"
+
+[tasks.ruby-json]
+run = "ruby Ruby/json.rb"
+
+[tasks.ruby-fileio]
+run = "ruby Ruby/fileio.rb"
+
+[tasks.ruby-math]
+run = "ruby Ruby/math.rb"
+
+[tasks.ruby-network]
+run = "ruby Ruby/network.rb"
+
+[tasks.ruby-crypto]
+run = "ruby Ruby/crypto.rb"
+
+[tasks.ruby-ml]
+run = "ruby Ruby/ml.rb"
+
+[tasks.ruby-concurrency]
+run = "ruby Ruby/concurrency.rb"
+
+[tasks.ruby-cpu]
+run = "ruby Ruby/cpu.rb"
+
+[tasks.ruby-allocator]
+run = "ruby Ruby/allocator.rb"
+
+# ============================================================================
+# C# Benchmarks
+# ============================================================================
+
+[tasks.cs-compile]
+run = "dotnet build CS -c Release"
+
+[tasks.cs-run]
+depends = ["cs-matrix", "cs-sort", "cs-string", "cs-hash", "cs-regex", "cs-json", "cs-fileio", "cs-math", "cs-network", "cs-crypto", "cs-ml", "cs-concurrency", "cs-cpu", "cs-allocator"]
+
+[tasks.cs-matrix]
+run = "dotnet run --project CS -- matrix"
+
+[tasks.cs-sort]
+run = "dotnet run --project CS -- sort"
+
+[tasks.cs-string]
+run = "dotnet run --project CS -- string"
+
+[tasks.cs-hash]
+run = "dotnet run --project CS -- hash"
+
+[tasks.cs-regex]
+run = "dotnet run --project CS -- regex"
+
+[tasks.cs-json]
+run = "dotnet run --project CS -- json"
+
+[tasks.cs-fileio]
+run = "dotnet run --project CS -- fileio"
+
+[tasks.cs-math]
+run = "dotnet run --project CS -- math"
+
+[tasks.cs-network]
+run = "dotnet run --project CS -- network"
+
+[tasks.cs-crypto]
+run = "dotnet run --project CS -- crypto"
+
+[tasks.cs-ml]
+run = "dotnet run --project CS -- ml"
+
+[tasks.cs-concurrency]
+run = "dotnet run --project CS -- concurrency"
+
+[tasks.cs-cpu]
+run = "dotnet run --project CS -- cpu"
+
+[tasks.cs-allocator]
+run = "dotnet run --project CS -- allocator"
+
+# ============================================================================
+# Node.js Benchmarks
+# ============================================================================
+
+[tasks.node-compile]
+run = "npm install"
+
+[tasks.node-run]
+run = "node Node/benchmark.js"
+
+# ============================================================================
+# PHP Benchmarks
+# ============================================================================
+
+[tasks.php-compile]
+run = "composer install"
+
+[tasks.php-run]
+run = "php PHP/benchmark.php"
+
+# ============================================================================
+# Swift Benchmarks
+# ============================================================================
+
+[tasks.swift-compile]
+run = "swiftc -O -o Swift/benchmark.swift swiftc.swift"
+
+[tasks.swift-run]
+run = "./Swift/benchmark.swift"
+
+# ============================================================================
+# Zig Benchmarks
+# ============================================================================
+
+[tasks.zig-compile]
+run = "zig build -Dbenchmarks"
+
+[tasks.zig-run]
+run = "./Zig/zig-out/bin/benchmark"
+
+# ============================================================================
+# Kotlin Benchmarks
+# ============================================================================
+
+[tasks.kotlin-compile]
+run = "mkdir -p Kotlin/bin && javac -d Kotlin/bin Kotlin/Benchmark.kt Kotlin/*.java"
+
+[tasks.kotlin-run]
+run = "java -cp Kotlin/bin Benchmark"

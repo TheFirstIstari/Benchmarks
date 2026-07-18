@@ -11,7 +11,7 @@ using namespace std;
 using namespace chrono;
 
 int main() {
-    cout << "C++ Network Benchmark" << endl;
+    cout << "C++ Network Benchmark (" << ITERATIONS << " iterations)" << endl;
     
     int fds[2];
     pipe(fds);
@@ -33,14 +33,23 @@ int main() {
     vector<char> dst(8192, 0);
     
     t0 = high_resolution_clock::now();
-    for (int i = 0; i < ITERATIONS * 10; i++) {
+    for (int i = 0; i < ITERATIONS * 100; i++) {
         memcpy(dst.data(), src.data(), 8192);
     }
     t1 = high_resolution_clock::now();
     total_ms = duration<double, milli>(t1 - t0).count();
     
-    throughput = (ITERATIONS * 10 * 8192) / (total_ms / 1000.0) / 1e9;
+    throughput = (ITERATIONS * 8192) / (total_ms / 1000.0) / 1e9;
     cout << "Memcpy 8K: " << throughput << " GB/s (" << total_ms << " ms)" << endl;
+    
+    t0 = high_resolution_clock::now();
+    for (int i = 0; i < ITERATIONS * 100; i++) {
+        volatile int x = 0;
+        x++;
+    }
+    t1 = high_resolution_clock::now();
+    total_ms = duration<double, milli>(t1 - t0).count();
+    cout << "Loop overhead: " << total_ms << " ms" << endl;
     
     close(fds[0]);
     close(fds[1]);

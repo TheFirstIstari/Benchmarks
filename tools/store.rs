@@ -71,7 +71,7 @@ fn main() {
                 db.get_runs(1).ok()?.first()?.id
             }).expect("No run ID provided and no runs found");
             
-            let results = db.get_latest_results(10000).expect("Failed to get results");
+            let results = db.get_results_for_run(id).expect("Failed to get results");
             
             if results.is_empty() {
                 println!("No results for run {}", id);

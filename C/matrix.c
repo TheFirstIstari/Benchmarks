@@ -13,8 +13,7 @@ static inline uint64_t now_ns(void) {
     return (mach_absolute_time() * tb.numer) / tb.denom;
 }
 
-// Let the compiler auto-vectorize — clang -O3 does better than manual NEON here
-// restrict + ikj order (cache-friendly) is the key optimization
+// Optimized matrix multiplication with cache-friendly ikj order
 static void matmul(double* restrict C, const double* restrict A,
                    const double* restrict B, int n) {
     for (int i = 0; i < n; i++) {
@@ -43,10 +42,10 @@ void add_matrices(double* restrict C, const double* restrict A,
 }
 
 int main(void) {
-    double* A = malloc(N * N * sizeof(double));
-    double* B = malloc(N * N * sizeof(double));
-    double* C = calloc(N * N, sizeof(double));
-    double* T = malloc(N * N * sizeof(double));
+    double* A = aligned_alloc(64, N * N * sizeof(double));
+    double* B = aligned_alloc(64, N * N * sizeof(double));
+    double* C = aligned_alloc(64, N * N * sizeof(double));
+    double* T = aligned_alloc(64, N * N * sizeof(double));
 
     srand(42);
     for (int i = 0; i < N * N; i++) {

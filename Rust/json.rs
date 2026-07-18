@@ -35,7 +35,7 @@ fn main() {
     
     let t0 = std::time::Instant::now();
     for _ in 0..ITERATIONS {
-        let count = large_str.matches("\"\":").count();
+        let _count = large_str.matches("\"\":").count();
     }
     let t1 = std::time::Instant::now();
     let ms = (t1 - t0).as_secs_f64() * 1000.0;

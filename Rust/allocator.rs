@@ -1,7 +1,6 @@
 use std::time::Instant;
 use std::alloc::{alloc, dealloc, Layout};
 use std::thread;
-use std::sync::{Arc, Mutex};
 
 const BLOCK_SIZE: usize = 64;
 const LIVE_BLOCKS: usize = 1024;

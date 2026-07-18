@@ -44,76 +44,58 @@ enum Cmd {
 
 // ── Task definitions ──────────────────────────────────────────────────
 
+#[derive(Clone)]
 struct Task {
-    mise: &'static str,
-    lang: &'static str,
-    cat: &'static str,
+    mise: String,
+    lang: String,
+    cat: String,
 }
 
 fn tasks() -> Vec<Task> {
-    vec![
-        Task { mise: "c-matrix",       lang: "C",      cat: "matrix" },
-        Task { mise: "cpp-matrix",     lang: "C++",    cat: "matrix" },
-        Task { mise: "rust-matrix",    lang: "Rust",   cat: "matrix" },
-        Task { mise: "python-matrix",  lang: "Python", cat: "matrix" },
-        Task { mise: "java-matrix",    lang: "Java",   cat: "matrix" },
-        Task { mise: "c-sort",         lang: "C",      cat: "sort" },
-        Task { mise: "cpp-sort",       lang: "C++",    cat: "sort" },
-        Task { mise: "rust-sort",      lang: "Rust",   cat: "sort" },
-        Task { mise: "python-sort",    lang: "Python", cat: "sort" },
-        Task { mise: "java-sort",      lang: "Java",   cat: "sort" },
-        Task { mise: "c-string",       lang: "C",      cat: "string" },
-        Task { mise: "cpp-string",     lang: "C++",    cat: "string" },
-        Task { mise: "rust-string",    lang: "Rust",   cat: "string" },
-        Task { mise: "python-string",  lang: "Python", cat: "string" },
-        Task { mise: "java-string",    lang: "Java",   cat: "string" },
-        Task { mise: "c-hash",         lang: "C",      cat: "hash" },
-        Task { mise: "cpp-hash",       lang: "C++",    cat: "hash" },
-        Task { mise: "rust-hash",      lang: "Rust",   cat: "hash" },
-        Task { mise: "python-hash",    lang: "Python", cat: "hash" },
-        Task { mise: "java-hash",      lang: "Java",   cat: "hash" },
-        Task { mise: "c-regex",        lang: "C",      cat: "regex" },
-        Task { mise: "cpp-regex",      lang: "C++",    cat: "regex" },
-        Task { mise: "rust-regex",     lang: "Rust",   cat: "regex" },
-        Task { mise: "python-regex",   lang: "Python", cat: "regex" },
-        Task { mise: "java-regex",     lang: "Java",   cat: "regex" },
-        Task { mise: "c-json",         lang: "C",      cat: "json" },
-        Task { mise: "cpp-json",       lang: "C++",    cat: "json" },
-        Task { mise: "rust-json",      lang: "Rust",   cat: "json" },
-        Task { mise: "python-json",    lang: "Python", cat: "json" },
-        Task { mise: "java-json",      lang: "Java",   cat: "json" },
-        Task { mise: "c-fileio",       lang: "C",      cat: "fileio" },
-        Task { mise: "cpp-fileio",     lang: "C++",    cat: "fileio" },
-        Task { mise: "rust-fileio",    lang: "Rust",   cat: "fileio" },
-        Task { mise: "python-fileio",  lang: "Python", cat: "fileio" },
-        Task { mise: "java-fileio",    lang: "Java",   cat: "fileio" },
-        Task { mise: "c-math",         lang: "C",      cat: "math" },
-        Task { mise: "cpp-math",       lang: "C++",    cat: "math" },
-        Task { mise: "rust-math",      lang: "Rust",   cat: "math" },
-        Task { mise: "python-math",    lang: "Python", cat: "math" },
-        Task { mise: "java-math",      lang: "Java",   cat: "math" },
-        Task { mise: "c-crypto",       lang: "C",      cat: "crypto" },
-        Task { mise: "cpp-crypto",     lang: "C++",    cat: "crypto" },
-        Task { mise: "rust-crypto",    lang: "Rust",   cat: "crypto" },
-        Task { mise: "python-crypto",  lang: "Python", cat: "crypto" },
-        Task { mise: "java-crypto",    lang: "Java",   cat: "crypto" },
-        Task { mise: "c-cpu",          lang: "C",      cat: "cpu" },
-        Task { mise: "cpp-cpu",        lang: "C++",    cat: "cpu" },
-        Task { mise: "rust-cpu",       lang: "Rust",   cat: "cpu" },
-        Task { mise: "python-cpu",     lang: "Python", cat: "cpu" },
-        Task { mise: "java-cpu",       lang: "Java",   cat: "cpu" },
-        Task { mise: "c-network",      lang: "C",      cat: "network" },
-        Task { mise: "cpp-network",    lang: "C++",    cat: "network" },
-        Task { mise: "rust-network",   lang: "Rust",   cat: "network" },
-        Task { mise: "python-network", lang: "Python", cat: "network" },
-        Task { mise: "c-ml",           lang: "C",      cat: "ml" },
-        Task { mise: "rust-ml",        lang: "Rust",   cat: "ml" },
-        Task { mise: "python-ml",      lang: "Python", cat: "ml" },
-        Task { mise: "c-concurrency",  lang: "C",      cat: "concurrency" },
-        Task { mise: "cpp-concurrency",lang: "C++",    cat: "concurrency" },
-        Task { mise: "rust-concurrency",lang: "Rust",  cat: "concurrency" },
-        Task { mise: "java-concurrency",lang: "Java",  cat: "concurrency" },
-    ]
+    use once_cell::sync::OnceCell;
+    use regex::Regex;
+    
+    // Use BenchTask from tasks.rs logic
+    let task_defs: Vec<(&str, &str, &str)> = vec![
+        ("c", "matrix"), ("cpp", "matrix"), ("rust", "matrix"), ("python", "matrix"),
+        ("java", "matrix"), ("go", "matrix"), ("ruby", "matrix"), ("cs", "matrix"),
+        ("node", "matrix"), ("php", "matrix"), ("swift", "matrix"), ("kotlin", "matrix"), ("zig", "matrix"),
+        ("c", "sort"), ("cpp", "sort"), ("rust", "sort"), ("python", "sort"),
+        ("java", "sort"), ("go", "sort"), ("ruby", "sort"), ("cs", "sort"),
+        ("node", "sort"), ("php", "sort"), ("swift", "sort"), ("kotlin", "sort"), ("zig", "sort"),
+        ("c", "string"), ("cpp", "string"), ("rust", "string"), ("python", "string"),
+        ("java", "string"), ("go", "string"), ("ruby", "string"), ("cs", "string"),
+        ("node", "string"), ("php", "string"), ("swift", "string"), ("kotlin", "string"), ("zig", "string"),
+        ("c", "hash"), ("cpp", "hash"), ("rust", "hash"), ("python", "hash"),
+        ("java", "hash"), ("go", "hash"), ("ruby", "hash"), ("cs", "hash"),
+        ("node", "hash"), ("php", "hash"), ("swift", "hash"), ("kotlin", "hash"), ("zig", "hash"),
+        ("c", "regex"), ("cpp", "regex"), ("rust", "regex"), ("python", "regex"),
+        ("java", "regex"), ("go", "regex"), ("ruby", "regex"), ("cs", "regex"),
+        ("c", "json"), ("cpp", "json"), ("rust", "json"), ("python", "json"),
+        ("java", "json"), ("go", "json"), ("ruby", "json"), ("cs", "json"),
+        ("c", "fileio"), ("cpp", "fileio"), ("rust", "fileio"), ("python", "fileio"),
+        ("java", "fileio"), ("go", "fileio"), ("ruby", "fileio"), ("cs", "fileio"),
+        ("c", "math"), ("cpp", "math"), ("rust", "math"), ("python", "math"),
+        ("java", "math"), ("go", "math"), ("ruby", "math"), ("cs", "math"),
+        ("c", "network"), ("cpp", "network"), ("rust", "network"), ("python", "network"),
+        ("go", "network"), ("ruby", "network"), ("cs", "network"),
+        ("c", "crypto"), ("cpp", "crypto"), ("rust", "crypto"), ("python", "crypto"),
+        ("go", "crypto"), ("ruby", "crypto"), ("cs", "crypto"),
+        ("c", "cpu"), ("cpp", "cpu"), ("rust", "cpu"), ("python", "cpu"),
+        ("go", "cpu"), ("ruby", "cpu"), ("cs", "cpu"),
+        ("c", "ml"), ("cpp", "ml"), ("rust", "ml"), ("python", "ml"),
+        ("go", "ml"), ("ruby", "ml"), ("cs", "ml"),
+        ("c", "concurrency"), ("cpp", "concurrency"), ("rust", "concurrency"), ("python-async", "concurrency"),
+        ("java", "concurrency"), ("go", "concurrency"), ("ruby", "concurrency"), ("cs", "concurrency"),
+        ("c", "allocator"), ("cpp", "allocator"), ("rust", "allocator"), ("python", "allocator"),
+        ("go", "allocator"), ("ruby", "allocator"), ("cs", "allocator"),
+    ];
+    
+    task_defs.into_iter().map(|(lang, cat)| Task {
+        mise: format!("{}-{}", lang, cat),
+        lang: lang.replace("python-async", "Python").into(),
+        cat: cat.into(),
+    }).collect()
 }
 
 // ── Output parsing ────────────────────────────────────────────────────
@@ -125,21 +107,31 @@ fn parse_output(output: &str, lang: &str, cat: &str) -> Vec<BenchmarkResult> {
     let now = Utc::now();
     let mut out = Vec::new();
 
+    // Parse lines like "cpu_popcount: 123.45 ms" or "123.45 ms avg"
+    static RE: once_cell::sync::OnceCell<regex::Regex> = once_cell::sync::OnceCell::new();
+    let re = RE.get_or_init(|| {
+        regex::Regex::new(r"^([a-zA-Z0-9_\- \()]+):\s*([\d.]+)\s*ms").unwrap()
+    });
+
     for line in output.lines() {
         let line = line.trim();
         if line.is_empty() || line.starts_with('#') || line.starts_with('=') {
             continue;
         }
-        // "Name: value ms" or "Name: value ms (extra)"
-        if let Some((name, ms)) = parse_time_line(line) {
+        if let Some(caps) = re.captures(line) {
+            let test_name = caps.get(1).map(|m| m.as_str().trim().to_string()).unwrap_or_default();
+            let time_ms: f64 = caps.get(2).and_then(|m| m.as_str().parse().ok()).unwrap_or(0.0);
+            if !time_ms.is_finite() {
+                continue;
+            }
             out.push(BenchmarkResult {
                 id: None,
                 language: lang.into(),
                 category: cat.into(),
-                test_name: name,
-                time_ms: ms,
+                test_name,
+                time_ms,
                 metric: "ms".into(),
-                value: ms,
+                value: time_ms,
                 metadata: None,
                 timestamp: now,
                 hostname: host.clone(),
@@ -147,23 +139,6 @@ fn parse_output(output: &str, lang: &str, cat: &str) -> Vec<BenchmarkResult> {
         }
     }
     out
-}
-
-use std::sync::OnceLock;
-
-fn parse_time_line(line: &str) -> Option<(String, f64)> {
-    static RE: OnceLock<regex::Regex> = OnceLock::new();
-    let re = RE.get_or_init(|| {
-        regex::Regex::new(r"^([a-zA-Z0-9_ ]+?):\s*([\d.]+)\s*ms").unwrap()
-    });
-
-    let caps = re.captures(line)?;
-    let name = caps.get(1)?.as_str().trim().to_string();
-    let ms: f64 = caps.get(2)?.as_str().parse().ok()?;
-    if !ms.is_finite() {
-        return None;
-    }
-    Some((name, ms))
 }
 
 // ── Run subcommand ────────────────────────────────────────────────────

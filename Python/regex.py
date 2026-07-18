@@ -2,7 +2,7 @@
 import time
 import re
 
-ITERATIONS = 10
+ITERATIONS = 1000
 STR_LEN = 100000
 
 

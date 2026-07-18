@@ -1,11 +1,11 @@
 # Cross-Language Benchmark Suite
 
-A comprehensive benchmark suite comparing performance across multiple programming languages: C, C++, Rust, Python, and Java with an interactive TUI for visualizing results.
+A comprehensive benchmark suite comparing performance across multiple programming languages: C, C++, Rust, Python, Java, Go, Ruby, and C# with an interactive TUI for visualizing results.
 
 ## Features
 
-- **Multi-language support**: C (clang), C++ (clang), Rust, Python, Java
-- **12 benchmark categories**: Matrix, Sort, String, Hash, Regex, JSON, File I/O, Math, Network, Crypto, ML, Concurrency
+- **Multi-language support**: C (clang), C++ (clang), Rust, Python, Java, Go, Ruby, and C# — each language ships one benchmark per category
+- **14 benchmark categories**: Matrix, Sort, String, Hash, Regex, JSON, File I/O, Math, Network, Crypto, ML, Concurrency, CPU, Allocator
 - **Interactive TUI**: Graph and table views with statistical analysis
 - **SQLite storage**: Persistent benchmark result history
 - **Row selection**: Navigate and drill down into specific benchmarks
@@ -34,6 +34,9 @@ mise monitor
 - **Python** - 3.x with numpy
 - **Rust** - Latest stable
 - **Java** - OpenJDK 21+
+- **Go** - Latest stable
+- **Ruby** - 3.x
+- **.NET / C#** - SDK 9.x
 
 ## Benchmark Commands
 
@@ -89,6 +92,8 @@ mise store           # List stored benchmark runs
 mise runner          # Run benchmarks with automatic result storage
 ```
 
+> `mise all` / `mise run-all-benchmarks` run every language×category combination, and `mise runner` stores results to SQLite.
+
 ## Monitor TUI
 
 Run `mise monitor` to launch the interactive TUI:
@@ -119,6 +124,9 @@ Benchmarks/
 ├── Python/         # Python benchmarks (.py files)
 ├── Java/           # Java benchmarks (.java files)
 ├── Rust/           # Rust benchmarks (.rs files) + Cargo.toml
+├── Go/             # Go benchmarks (per-category subpackages, e.g. Go/matrix/main.go)
+├── Ruby/           # Ruby benchmarks (Ruby/<cat>.rb)
+├── CS/             # C# benchmark (Program.cs with subcommand dispatch)
 ├── tools/          # Monitor & database tools
 │   ├── monitor.rs  # TUI application
 │   ├── runner.rs   # Benchmark runner
@@ -133,6 +141,9 @@ Benchmarks/
 - **C/C++**: `-O3 -ffast-math -march=native` (maximum compiler optimizations)
 - **Rust**: `opt-level = 3, lto = "fat", codegen-units = 1`
 - **Java**: JIT warmup enabled before timing
+- **Go**: built with `go build` (default release optimizations); run via `go run`
+- **C#**: `dotnet build -c Release`
+- **Ruby**: interpreted (no compile step)
 
 ## Benchmark Categories
 
@@ -150,6 +161,8 @@ Benchmarks/
 | **Crypto** | XOR, Integer ops |
 | **ML** | Element-wise mul, Dot product, Lerp, Sigmoid |
 | **Concurrency** | Thread pool, Atomic counter |
+| **CPU** | Fibonacci, Prime sieve, Popcount, Branch prediction, Memory latency, SIMD, Atomics |
+| **Allocator** | Alloc/free throughput, BLOCK_SIZE=64, 10M allocs |
 
 ## Adding New Benchmarks
 

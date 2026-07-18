@@ -7,7 +7,7 @@ fn main() {
     println!("Rust ML Benchmark");
     
     let mut a: Vec<f32> = (0..VECTOR_SIZE).map(|i| i as f32 / VECTOR_SIZE as f32).collect();
-    let mut b: Vec<f32> = (0..VECTOR_SIZE).map(|i| (VECTOR_SIZE - i) as f32 / VECTOR_SIZE as f32).collect();
+    let b: Vec<f32> = (0..VECTOR_SIZE).map(|i| (VECTOR_SIZE - i) as f32 / VECTOR_SIZE as f32).collect();
     let mut c: Vec<f32> = vec![0.0; VECTOR_SIZE];
     
     let t0 = Instant::now();

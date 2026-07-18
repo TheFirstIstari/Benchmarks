@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import time
 
-ITERATIONS = 10000
+ITERATIONS = 1_000_000
 STR_LEN = 1000
 
 
