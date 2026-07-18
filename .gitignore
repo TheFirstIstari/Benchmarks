@@ -54,3 +54,4 @@ tools/target/
 *.dll
 *.exe
 *.pdb
+jpeg/
