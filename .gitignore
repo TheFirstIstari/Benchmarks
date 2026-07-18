@@ -23,9 +23,34 @@ Thumbs.db
 *.log
 .env
 
-|# MemPalace per-project files (issue #185)
+# MemPalace per-project files (issue #185)
 mempalace.yaml
 entities.json
 
 # jpeg is a standalone repo at github.com/TheFirstIstari/jpeg-bench
 /jpeg/
+
+# C# build artifacts
+CS/bin/
+CS/obj/
+
+# Go build artifacts
+Go/*/
+Go/go.mod
+Go/go.sum
+
+# Java build artifacts
+*.class
+*.jar
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Rust target (tools)
+tools/target/
+
+# Build outputs
+*.dll
+*.exe
+*.pdb
